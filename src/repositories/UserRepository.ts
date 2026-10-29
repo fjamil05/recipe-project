@@ -37,6 +37,39 @@ export class UserRepository {
     }
 
 
+public async login(
+    email: string,
+    password: string
+): Promise<User | null> {
+
+    // Find the user by email
+    const rows = await pool.query(
+        "SELECT user_id, username, email, password_hash FROM Users WHERE email = ?",
+        [email]
+    );
+
+    // Return null if the email does not exist
+    if (rows.length === 0) {
+        return null;
+    }
+
+    const row = rows[0];
+
+    // Compare the entered password with the stored hash
+    const passwordMatches = await bcrypt.compare(
+        password,
+        row.password_hash
+    );
+
+    if (!passwordMatches) {
+        return null;
+    }
+
+    // Return the user if the credentials are correct
+    return new User(row.user_id, row.username, row.email);
+}
+
+
 public async createUser(
     username: string,
     email: string,
