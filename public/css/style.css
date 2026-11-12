@@ -491,3 +491,387 @@ header {
         padding: 25px 15px;
     }
 }
+
+/* Create Board Form */
+
+.create-board-form {
+    background-color: #fff5ef;
+    border: 2px solid #efb49e;
+    border-radius: 16px;
+    padding: 30px;
+    margin: 25px 0;
+}
+
+.create-board-form[hidden] {
+    display: none;
+}
+
+.create-board-form h2 {
+    color: #e95322;
+    font-size: 28px;
+    margin-bottom: 25px;
+}
+
+/* Form layout */
+
+#new-board-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* Labels */
+
+#new-board-form label {
+    color: #a94e2e;
+    font-size: 17px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+/* Text box and dropdown */
+
+#new-board-form input,
+#new-board-form select {
+    width: 100%;
+    max-width: 420px;
+    padding: 14px 16px;
+    border: 2px solid #efb49e;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 16px;
+    font-family: inherit;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+#new-board-form input:focus,
+#new-board-form select:focus {
+    border-color: #e95322;
+    box-shadow: 0 0 0 3px rgba(233, 83, 34, 0.12);
+}
+
+#new-board-form input::placeholder {
+    color: #a8a09b;
+}
+
+/* Form buttons */
+
+.board-form-buttons {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.board-form-buttons .create-board-button {
+    background-color: #f6a23e;
+    color: white;
+    border: 2px solid #eb8d20;
+    border-radius: 10px;
+    padding: 13px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#cancel-board-button {
+    background-color: #ffffff;
+    color: #a94e2e;
+    border: 2px solid #efb49e;
+    border-radius: 10px;
+    padding: 13px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#cancel-board-button:hover {
+    background-color: #ffe6d9;
+}
+
+/* Board Cover Upload */
+
+#board-cover {
+    width: 100%;
+    max-width: 420px;
+    padding: 12px;
+    background-color: #ffffff;
+    border: 2px dashed #efb49e;
+    border-radius: 10px;
+    color: #a94e2e;
+    font-size: 15px;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+#board-cover::file-selector-button {
+    background-color: #f6a23e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-right: 12px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+#board-cover::file-selector-button:hover {
+    background-color: #e95322;
+}
+
+.board-cover-hint {
+    color: #9b7467;
+    font-size: 14px;
+    margin: 0 0 8px;
+}
+
+/* Cover Photo Preview */
+
+.board-cover-preview {
+    width: 100%;
+    max-width: 420px;
+    height: 200px;
+    border: 2px solid #efb49e;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #fff0e6;
+}
+
+.board-cover-preview[hidden] {
+    display: none;
+}
+
+.board-cover-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Board Card Cover Photos */
+
+.board-card .board-image {
+    width: 100%;
+    height: 180px;
+    overflow: hidden;
+    background-color: #ffe5d6;
+}
+
+.board-card .board-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Board Options Menu */
+
+.board-card {
+    position: relative;
+}
+
+.board-menu {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 10;
+}
+
+.board-menu-button {
+    width: 36px;
+    height: 36px;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid #efb49e;
+    border-radius: 10px;
+    color: #a94e2e;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.board-menu-button:hover {
+    background-color: #ffe6d9;
+}
+
+/* Dropdown Options */
+
+.board-menu-options {
+    position: absolute;
+    top: 42px;
+    right: 0;
+    width: 150px;
+    background-color: #ffffff;
+    border: 1px solid #efb49e;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    overflow: hidden;
+}
+
+.board-menu-options[hidden] {
+    display: none;
+}
+
+.board-menu-options button {
+    display: block;
+    width: 100%;
+    padding: 12px 15px;
+    background: none;
+    border: none;
+    color: #a94e2e;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.board-menu-options button:hover {
+    background-color: #fff0e6;
+}
+
+.board-menu-options .delete-board-option {
+    color: #c0392b;
+}
+
+.board-menu-options .delete-board-option:hover {
+    background-color: #ffe5e5;
+}
+
+/* Edit Board Form */
+
+#board-edit-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* Form labels */
+
+#board-edit-form > label:not(.remove-cover-label) {
+    color: #a94e2e;
+    font-size: 17px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+/* Board name and visibility fields */
+
+#edit-board-name,
+#edit-board-visibility {
+    width: 100%;
+    max-width: 420px;
+    padding: 14px 16px;
+    border: 2px solid #efb49e;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 16px;
+    font-family: inherit;
+    box-sizing: border-box;
+    outline: none;
+}
+
+#edit-board-name:focus,
+#edit-board-visibility:focus {
+    border-color: #e95322;
+    box-shadow: 0 0 0 3px rgba(233, 83, 34, 0.12);
+}
+
+/* Photo upload */
+
+#edit-board-cover {
+    width: 100%;
+    max-width: 420px;
+    padding: 12px;
+    border: 2px dashed #efb49e;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #a94e2e;
+    font-size: 15px;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+#edit-board-cover::file-selector-button {
+    background-color: #f6a23e;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 15px;
+    margin-right: 12px;
+    cursor: pointer;
+}
+
+/* Edit photo preview */
+
+#edit-cover-preview {
+    width: 100%;
+    max-width: 420px;
+    height: 200px;
+    border: 2px solid #efb49e;
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #fff0e6;
+    box-sizing: border-box;
+}
+
+#edit-cover-preview[hidden] {
+    display: none;
+}
+
+#edit-cover-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+/* Remove photo checkbox */
+
+.remove-cover-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+    color: #a94e2e;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+#remove-board-cover {
+    width: 18px;
+    height: 18px;
+    accent-color: #e95322;
+    cursor: pointer;
+}
+
+/* Edit form buttons */
+
+#board-edit-form .board-form-buttons {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin-top: 18px;
+}
+
+#cancel-edit-button {
+    background-color: #ffffff;
+    color: #a94e2e;
+    border: 2px solid #efb49e;
+    border-radius: 10px;
+    padding: 13px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#cancel-edit-button:hover {
+    background-color: #ffe6d9;
+}

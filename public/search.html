@@ -102,41 +102,43 @@
 
         </section>
 
-        <section class="recipe-details">
-            <h2>Recipe Details</h2>
+        
+<section class="recipe-details" id="recipe-details">
+    <h2>Recipe Details</h2>
 
-            <div class="details-content">
-                <h3>Fluffy Pancakes</h3>
+    <div class="details-content">
+        <h3 id="detail-name">Select a Recipe</h3>
 
-                <p><strong>Category:</strong> Breakfast</p>
-                <p><strong>Cooking Time:</strong> 20 minutes</p>
-                <p><strong>Difficulty:</strong> Easy</p>
-                <p><strong>Enjoyment Rating:</strong> ★★★★★</p>
+        <p><strong>Category:</strong>
+            <span id="detail-category">-</span>
+        </p>
 
-                <h4>Ingredients</h4>
-                <ul>
-                    <li>1 cup all-purpose flour</li>
-                    <li>1 tablespoon sugar</li>
-                    <li>2 teaspoons baking powder</li>
-                    <li>1 egg</li>
-                    <li>3/4 cup milk</li>
-                </ul>
+        <p><strong>Cooking Time:</strong>
+            <span id="detail-time">-</span>
+        </p>
 
-                <h4>Instructions</h4>
-                <ol>
-                    <li>Combine the dry ingredients.</li>
-                    <li>Mix in the egg and milk.</li>
-                    <li>Heat a lightly greased pan.</li>
-                    <li>Pour batter into the pan.</li>
-                    <li>Cook until golden on both sides.</li>
-                </ol>
+        <p><strong>Difficulty:</strong>
+            <span id="detail-difficulty">-</span>
+        </p>
 
-                <button type="button" class="save-recipe-button">
-                    Save to Board
-                </button>
-            </div>
-        </section>
+        <p><strong>Enjoyment Rating:</strong>
+            <span id="detail-rating">-</span>
+        </p>
+
+        <h4>Ingredients</h4>
+        <ul id="detail-ingredients"></ul>
+
+        <h4>Instructions</h4>
+        <ol id="detail-instructions"></ol>
+
+        <button type="button" class="save-recipe-button">
+            Save to Board
+        </button>
+    </div>
+</section>
+
     </main>
     <script type="module" src="js/search.js"></script>
+    <script type="module" src="js/recipeDetails.js"></script>
 </body>
 </html>

@@ -26,43 +26,138 @@
             </button>
         </div>
 
-        <section class="boards-grid">
 
-            <article class="board-card">
-                <div class="board-image">🍳</div>
-                <div class="board-info">
-                    <h2>Breakfast Favorites</h2>
-                    <p>8 Recipes</p>
-                    <span class="board-visibility">Private</span>
-                </div>
-            </article>
+<section class="create-board-form" id="create-board-form" hidden>
+    <h2>Create a New Board</h2>
 
-            <article class="board-card">
-                <div class="board-image">🍝</div>
-                <div class="board-info">
-                    <h2>Family Dinners</h2>
-                    <p>12 Recipes</p>
-                    <span class="board-visibility">Shared</span>
-                </div>
-            </article>
+    <form id="new-board-form">
+        <label for="board-name">Board Name</label>
 
-            <article class="board-card">
-                <div class="board-image">🧁</div>
-                <div class="board-info">
-                    <h2>Desserts</h2>
-                    <p>5 Recipes</p>
-                    <span class="board-visibility">Private</span>
-                </div>
-            </article>
+        <input
+            type="text"
+            id="board-name"
+            placeholder="Enter board name"
+            required
+        >
 
-            <article class="board-card new-board-card">
-                <span>+</span>
-                <p>Create a New Board</p>
-            </article>
+        <label for="board-visibility">Visibility</label>
 
-        </section>
+        <select id="board-visibility">
+            <option value="Private">Private</option>
+            <option value="Shared">Shared</option>
+        </select>
+
+
+<label for="board-cover">Board Cover Photo (Optional)</label>
+
+<input
+    type="file"
+    id="board-cover"
+    accept="image/*"
+>
+
+<p class="board-cover-hint">
+    Upload a photo from your computer.
+    Your image will automatically be resized to fit the board cover.
+</p>
+
+<div class="board-cover-preview" id="board-cover-preview" hidden>
+    <img
+        id="board-cover-preview-image"
+        alt="Board cover preview"
+    >
+</div>
+
+        <div class="board-form-buttons">
+            <button type="submit" class="create-board-button">
+                Create Board
+            </button>
+
+            <button type="button" id="cancel-board-button">
+                Cancel
+            </button>
+        </div>
+    </form>
+</section>
+
+
+<!-- Edit Board Form -->
+<section class="create-board-form" id="edit-board-form" hidden>
+    <h2>Edit Board</h2>
+
+    <form id="board-edit-form">
+        <label for="edit-board-name">Board Name</label>
+        <input
+            type="text"
+            id="edit-board-name"
+            placeholder="Enter board name"
+            required
+        >
+
+        <label for="edit-board-visibility">Visibility</label>
+        <select id="edit-board-visibility">
+            <option value="Private">Private</option>
+            <option value="Shared">Shared</option>
+        </select>
+
+        <label for="edit-board-cover">Cover Photo</label>
+        <input
+            type="file"
+            id="edit-board-cover"
+            accept="image/*"
+        >
+
+        <p class="board-cover-hint">
+            Choose a new photo to replace the current cover.
+        </p>
+
+        <div class="board-cover-preview" id="edit-cover-preview" hidden>
+            <img
+                id="edit-cover-preview-image"
+                alt="Board cover preview"
+            >
+        </div>
+
+        <label class="remove-cover-label">
+            <input type="checkbox" id="remove-board-cover">
+            Remove current cover photo
+        </label>
+
+        <div class="board-form-buttons">
+            <button type="submit" class="create-board-button">
+                Save Changes
+            </button>
+
+            <button type="button" id="cancel-edit-button">
+                Cancel
+            </button>
+        </div>
+    </form>
+</section>
+
+
+        
+<section class="boards-grid" id="boards-grid">
+</section>
+
+<p id="no-boards-message" class="empty-boards-message" hidden>
+    You haven't created any recipe boards yet.
+    Click "+ Create Board" to get started!
+</p>
+
+
+<section class="saved-recipes-section">
+    <h2>Saved Recipes</h2>
+
+    <p id="no-saved-recipes">
+        You haven't saved any recipes yet.
+    </p>
+
+    <div id="saved-recipes-list" class="recipe-grid">
+    </div>
+</section>
 
     </main>
-
+     <script type="module" src="js/boards.js"></script>
 </body>
 </html>
