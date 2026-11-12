@@ -157,6 +157,51 @@ async function resizeBoardPhoto(file: File): Promise<string> {
 }
 
 
+function openBoard(board: RecipeBoard): void {
+    const boardSection =
+        document.querySelector<HTMLElement>("#board-recipes-section");
+
+    const boardName =
+        document.querySelector<HTMLElement>("#selected-board-name");
+
+    const recipesList =
+        document.querySelector<HTMLElement>("#board-recipes-list");
+
+    const emptyMessage =
+        document.querySelector<HTMLElement>("#board-recipes-empty");
+
+    if (!boardSection || !boardName || !recipesList || !emptyMessage) {
+        return;
+    }
+
+    boardName.textContent = board.name;
+    recipesList.replaceChildren();
+
+    if (board.recipes.length === 0) {
+        emptyMessage.hidden = false;
+    } else {
+        emptyMessage.hidden = true;
+
+        board.recipes.forEach((recipeName) => {
+            const card = document.createElement("article");
+            card.className = "recipe-card";
+
+            const recipeTitle = document.createElement("h3");
+            recipeTitle.textContent = recipeName;
+
+            card.appendChild(recipeTitle);
+            recipesList.appendChild(card);
+        });
+    }
+
+    boardSection.hidden = false;
+
+    boardSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
 // Display a board card
 function displayBoard(board: RecipeBoard): void {
     const boardsGrid =
@@ -169,6 +214,21 @@ function displayBoard(board: RecipeBoard): void {
     const card = document.createElement("article");
     card.className = "board-card";
     card.dataset.boardId = String(board.id);
+
+
+card.addEventListener("click", (event) => {
+    const target = event.target;
+
+    // Don't open the board when clicking its menu
+    if (
+        target instanceof Element &&
+        target.closest(".board-menu")
+    ) {
+        return;
+    }
+
+    openBoard(board);
+});
 
     
 const image = document.createElement("div");
@@ -537,6 +597,19 @@ cancelEditButton?.addEventListener("click", () => {
     }
 
     boardEditForm?.reset();
+});
+
+
+const closeBoardButton =
+    document.querySelector<HTMLButtonElement>("#close-board-recipes");
+
+closeBoardButton?.addEventListener("click", () => {
+    const boardSection =
+        document.querySelector<HTMLElement>("#board-recipes-section");
+
+    if (boardSection) {
+        boardSection.hidden = true;
+    }
 });
 
 

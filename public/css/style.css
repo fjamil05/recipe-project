@@ -875,3 +875,127 @@ header {
 #cancel-edit-button:hover {
     background-color: #ffe6d9;
 }
+
+
+/* Save Recipe to Board Panel */
+
+.save-to-board-panel {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #fff0e6;
+    border: 1px solid #f4b89b;
+    border-radius: 12px;
+}
+
+.save-to-board-panel[hidden] {
+    display: none;
+}
+
+.save-to-board-panel h4 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #d96b38;
+}
+
+.save-to-board-panel label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+#save-board-select {
+    width: 100%;
+    max-width: 350px;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #e7b69d;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 15px;
+}
+
+.save-to-board-panel .board-form-buttons {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+#confirm-save-board,
+#cancel-save-board {
+    padding: 10px 18px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#confirm-save-board {
+    background-color: #e88958;
+    color: white;
+    border: none;
+}
+
+#cancel-save-board {
+    background-color: white;
+    color: #9b4d2a;
+    border: 1px solid #e7b69d;
+}
+
+#save-board-message {
+    margin-top: 12px;
+}
+
+
+/* Board Recipes Section */
+
+.board-recipes-section {
+    margin-top: 30px;
+    padding: 25px;
+    background-color: #fff0e6;
+    border: 1px solid #f4b89b;
+    border-radius: 12px;
+}
+
+.board-recipes-section[hidden],
+#board-recipes-empty[hidden] {
+    display: none;
+}
+
+.board-recipes-section h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    color: #d96b38;
+}
+
+#board-recipes-list {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#board-recipes-list .recipe-card {
+    background-color: white;
+    border: 1px solid #f4b89b;
+    border-radius: 10px;
+    padding: 15px;
+}
+
+#board-recipes-list .recipe-card h3 {
+    color: #9b4d2a;
+    margin-top: 0;
+}
+
+#board-recipes-empty {
+    color: #795548;
+    margin-bottom: 20px;
+}
+
+#close-board-recipes {
+    padding: 10px 18px;
+    background-color: #e88958;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+#close-board-recipes:hover {
+    background-color: #d96b38;
+}

@@ -128,14 +128,49 @@
         <h4>Ingredients</h4>
         <ul id="detail-ingredients"></ul>
 
-        <h4>Instructions</h4>
-        <ol id="detail-instructions"></ol>
+        
+<h4>Instructions</h4>
+<ol id="detail-instructions"></ol>
 
-        <button type="button" class="save-recipe-button">
-            Save to Board
+<button type="button" class="save-recipe-button">
+    Save to Board
+</button>
+
+<!-- Choose which board receives the recipe -->
+<div id="save-to-board-panel" class="save-to-board-panel" hidden>
+    <h4>Choose a Board</h4>
+
+    <label for="save-board-select">
+        Select which board should receive this recipe:
+    </label>
+
+    <select id="save-board-select">
+        <option value="">Select a board</option>
+    </select>
+
+    <div class="board-form-buttons">
+        <button
+            type="button"
+            id="confirm-save-board"
+            class="create-board-button"
+        >
+            Save Recipe
+        </button>
+
+        <button
+            type="button"
+            id="cancel-save-board"
+        >
+            Cancel
         </button>
     </div>
+
+    <p id="save-board-message" aria-live="polite"></p>
+</div>
+
+</div>
 </section>
+
 
     </main>
     <script type="module" src="js/search.js"></script>

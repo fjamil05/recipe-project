@@ -143,36 +143,129 @@ recipeCards.forEach((card) => {
     });
 });
 
-const saveButton =
+
+interface RecipeBoard {
+    id: number;
+    name: string;
+    visibility: string;
+    recipes: string[];
+    coverPhoto?: string | undefined;
+}
+
+const saveToBoardButton =
     document.querySelector<HTMLButtonElement>(".save-recipe-button");
 
-saveButton?.addEventListener("click", () => {
-    if (selectedRecipe === null) {
+const saveToBoardPanel =
+    document.querySelector<HTMLElement>("#save-to-board-panel");
+
+const saveBoardSelect =
+    document.querySelector<HTMLSelectElement>("#save-board-select");
+
+const cancelSaveBoardButton =
+    document.querySelector<HTMLButtonElement>("#cancel-save-board");
+
+saveToBoardButton?.addEventListener("click", () => {
+    if (!selectedRecipe || !saveToBoardPanel || !saveBoardSelect) {
         alert("Please select a recipe first.");
         return;
     }
 
-    const savedRecipes: RecipeDetails[] = JSON.parse(
-        localStorage.getItem("savedRecipes") ?? "[]"
+    // Load the user's existing boards
+    const boards: RecipeBoard[] = JSON.parse(
+        localStorage.getItem("recipeBoards") ?? "[]"
     );
 
-    const alreadySaved = savedRecipes.some(
-        (recipe) => recipe.name === selectedRecipe?.name
-    );
+    // Clear the dropdown
+    saveBoardSelect.replaceChildren();
 
-    if (alreadySaved) {
-        alert("This recipe is already saved to your board.");
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Select a board";
+    saveBoardSelect.appendChild(defaultOption);
+
+    // Add each existing board
+    boards.forEach((board) => {
+        const option = document.createElement("option");
+        option.value = String(board.id);
+        option.textContent = board.name;
+        saveBoardSelect.appendChild(option);
+    });
+
+    if (boards.length === 0) {
+        alert("You don't have any boards yet. Create one on the Boards page.");
         return;
     }
 
-    savedRecipes.push(selectedRecipe);
+    saveToBoardPanel.hidden = false;
+    saveBoardSelect.focus();
+});
 
-    localStorage.setItem(
-        "savedRecipes",
-        JSON.stringify(savedRecipes)
+cancelSaveBoardButton?.addEventListener("click", () => {
+    if (saveToBoardPanel) {
+        saveToBoardPanel.hidden = true;
+    }
+});
+
+
+const confirmSaveBoardButton =
+    document.querySelector<HTMLButtonElement>("#confirm-save-board");
+
+const saveBoardMessage =
+    document.querySelector<HTMLElement>("#save-board-message");
+
+confirmSaveBoardButton?.addEventListener("click", () => {
+    if (!selectedRecipe || !saveBoardSelect) {
+        return;
+    }
+
+    // Make sure the user selected a board
+    const selectedBoardId = Number(saveBoardSelect.value);
+
+    if (!saveBoardSelect.value) {
+        alert("Please select a board.");
+        return;
+    }
+
+    // Load the user's boards
+    const boards: RecipeBoard[] = JSON.parse(
+        localStorage.getItem("recipeBoards") ?? "[]"
     );
 
-    alert(`${selectedRecipe.name} was saved to your board!`);
+    // Find the selected board
+    const board = boards.find(
+        (savedBoard) => savedBoard.id === selectedBoardId
+    );
+
+    if (!board) {
+        alert("The selected board could not be found.");
+        return;
+    }
+
+    // Check whether the recipe is already on this board
+    const alreadySaved = board.recipes.includes(selectedRecipe.name);
+
+    if (alreadySaved) {
+        if (saveBoardMessage) {
+            saveBoardMessage.textContent =
+                "This recipe is already saved to this board.";
+        }
+        return;
+    }
+
+    // Add the recipe to the selected board
+    board.recipes.push(selectedRecipe.name);
+
+    // Save the updated boards
+    localStorage.setItem(
+        "recipeBoards",
+        JSON.stringify(boards)
+    );
+
+    if (saveBoardMessage) {
+        saveBoardMessage.textContent =
+            `${selectedRecipe.name} was saved to ${board.name}!`;
+    }
 });
+
 
 export {};
