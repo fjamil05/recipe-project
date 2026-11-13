@@ -1,5 +1,5 @@
 let selectedRecipe = null;
-const recipes = [
+export const recipes = [
     {
         name: "Fluffy Pancakes",
         category: "Breakfast",
@@ -183,4 +183,3 @@ confirmSaveBoardButton?.addEventListener("click", () => {
             `${selectedRecipe.name} was saved to ${board.name}!`;
     }
 });
-export {};

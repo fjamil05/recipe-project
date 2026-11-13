@@ -1,5 +1,5 @@
 
-interface RecipeDetails {
+export interface RecipeDetails {
     name: string;
     category: string;
     time: number;
@@ -11,7 +11,7 @@ interface RecipeDetails {
 
 let selectedRecipe: RecipeDetails | null = null;
 
-const recipes: RecipeDetails[] = [
+export const recipes: RecipeDetails[] = [
     {
         name: "Fluffy Pancakes",
         category: "Breakfast",

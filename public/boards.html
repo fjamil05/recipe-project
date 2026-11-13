@@ -19,12 +19,21 @@
 
         <h1>My Recipe Boards</h1>
 
-        <div class="boards-toolbar">
-            <p>Organize your favorite recipes!</p>
-            <button type="button" class="create-board-button">
-                + Create Board
-            </button>
-        </div>
+        
+<div class="boards-toolbar">
+    <p>Organize your favorite recipes!</p>
+
+    <div class="board-form-buttons">
+        <button type="button" class="create-board-button" id="create-board-button">
+            + Create Board
+        </button>
+
+        <button type="button" class="create-board-button" id="create-recipe-button">
+            + Create Recipe
+        </button>
+    </div>
+</div>
+
 
 
 <section class="create-board-form" id="create-board-form" hidden>
@@ -77,6 +86,88 @@
                 Cancel
             </button>
         </div>
+    </form>
+</section>
+
+
+<!-- Create Recipe Form -->
+<section class="create-board-form" id="create-recipe-form" hidden>
+    <h2>Create a New Recipe</h2>
+
+    <form id="new-recipe-form">
+
+        <label for="recipe-name">Recipe Name</label>
+        <input
+            type="text"
+            id="recipe-name"
+            placeholder="Enter recipe name"
+            required
+        >
+
+        <label for="recipe-category">Category</label>
+        <select id="recipe-category" required>
+            <option value="">Select a category</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Dessert">Dessert</option>
+            <option value="Snack">Snack</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label for="recipe-time">Cooking Time (minutes)</label>
+        <input
+            type="number"
+            id="recipe-time"
+            min="1"
+            placeholder="Enter cooking time"
+            required
+        >
+
+        <label for="recipe-difficulty">Difficulty</label>
+        <select id="recipe-difficulty" required>
+            <option value="">Select difficulty</option>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+        </select>
+
+        <label for="recipe-rating">Enjoyment Rating</label>
+        <select id="recipe-rating" required>
+            <option value="">Select a rating</option>
+            <option value="1/5">1/5</option>
+            <option value="2/5">2/5</option>
+            <option value="3/5">3/5</option>
+            <option value="4/5">4/5</option>
+            <option value="5/5">5/5</option>
+        </select>
+
+        <label for="recipe-ingredients">Ingredients</label>
+        <textarea
+            id="recipe-ingredients"
+            rows="5"
+            placeholder="Enter one ingredient per line"
+            required
+        ></textarea>
+
+        <label for="recipe-instructions">Instructions</label>
+        <textarea
+            id="recipe-instructions"
+            rows="6"
+            placeholder="Enter one instruction per line"
+            required
+        ></textarea>
+
+        <div class="board-form-buttons">
+            <button type="submit" class="create-board-button">
+                Save Recipe
+            </button>
+
+            <button type="button" id="cancel-recipe-button">
+                Cancel
+            </button>
+        </div>
+
     </form>
 </section>
 
@@ -159,7 +250,49 @@
     <button type="button" id="close-board-recipes">
         Close Board
     </button>
+    
 </section>
+
+
+<!-- Displays details for a recipe selected from a board -->
+<section class="recipe-details" id="board-recipe-details" hidden>
+    <h2>Recipe Details</h2>
+
+    <div class="details-content">
+        <h3 id="board-detail-name">Select a Recipe</h3>
+
+        <p>
+            <strong>Category:</strong>
+            <span id="board-detail-category">-</span>
+        </p>
+
+        <p>
+            <strong>Cooking Time:</strong>
+            <span id="board-detail-time">-</span>
+        </p>
+
+        <p>
+            <strong>Difficulty:</strong>
+            <span id="board-detail-difficulty">-</span>
+        </p>
+
+        <p>
+            <strong>Enjoyment Rating:</strong>
+            <span id="board-detail-rating">-</span>
+        </p>
+
+        <h4>Ingredients</h4>
+        <ul id="board-detail-ingredients"></ul>
+
+        <h4>Instructions</h4>
+        <ol id="board-detail-instructions"></ol>
+
+        <button type="button" id="close-board-recipe-details">
+            Close Recipe
+        </button>
+    </div>
+</section>
+
 
 </p>
 

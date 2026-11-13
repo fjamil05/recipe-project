@@ -1,3 +1,4 @@
+import { recipes } from "./recipeDetails.js";
 function displaySavedRecipes() {
     const savedRecipesList = document.querySelector("#saved-recipes-list");
     const emptyMessage = document.querySelector("#no-saved-recipes");
@@ -24,10 +25,30 @@ function displaySavedRecipes() {
         time.textContent = `Time: ${recipe.time} minutes`;
         const difficulty = document.createElement("p");
         difficulty.textContent = `Difficulty: ${recipe.difficulty}`;
+        const viewButton = document.createElement("button");
+        viewButton.type = "button";
+        viewButton.className = "view-recipe-button";
+        viewButton.textContent = "View Recipe";
+        viewButton.addEventListener("click", () => {
+            closeOpenSections();
+            const matchedRecipe = recipes.find((savedRecipe) => savedRecipe.name === recipe.name);
+            if (matchedRecipe) {
+                displayBoardRecipe(matchedRecipe);
+            }
+            else {
+                displayBoardRecipe(recipe);
+            }
+        });
+        const addToBoardButton = document.createElement("button");
+        addToBoardButton.type = "button";
+        addToBoardButton.className = "view-recipe-button";
+        addToBoardButton.textContent = "Add to Board";
         recipeInfo.appendChild(name);
         recipeInfo.appendChild(category);
         recipeInfo.appendChild(time);
         recipeInfo.appendChild(difficulty);
+        recipeInfo.appendChild(viewButton);
+        recipeInfo.appendChild(addToBoardButton);
         card.appendChild(recipeInfo);
         savedRecipesList.appendChild(card);
     });
@@ -81,7 +102,54 @@ async function resizeBoardPhoto(file) {
     // Compress the photo before saving it
     return canvas.toDataURL("image/jpeg", 0.75);
 }
+function closeOpenSections() {
+    const boardSection = document.querySelector("#board-recipes-section");
+    const recipeDetails = document.querySelector("#board-recipe-details");
+    if (boardSection) {
+        boardSection.hidden = true;
+    }
+    if (recipeDetails) {
+        recipeDetails.hidden = true;
+    }
+}
+function displayBoardRecipe(recipe) {
+    const detailsSection = document.querySelector("#board-recipe-details");
+    const name = document.querySelector("#board-detail-name");
+    const category = document.querySelector("#board-detail-category");
+    const time = document.querySelector("#board-detail-time");
+    const difficulty = document.querySelector("#board-detail-difficulty");
+    const rating = document.querySelector("#board-detail-rating");
+    const ingredients = document.querySelector("#board-detail-ingredients");
+    const instructions = document.querySelector("#board-detail-instructions");
+    if (!detailsSection || !name || !category || !time ||
+        !difficulty || !rating || !ingredients || !instructions) {
+        return;
+    }
+    name.textContent = recipe.name;
+    category.textContent = recipe.category;
+    time.textContent = `${recipe.time} minutes`;
+    difficulty.textContent = recipe.difficulty;
+    rating.textContent = recipe.rating;
+    ingredients.replaceChildren();
+    instructions.replaceChildren();
+    recipe.ingredients.forEach((ingredient) => {
+        const item = document.createElement("li");
+        item.textContent = ingredient;
+        ingredients.appendChild(item);
+    });
+    recipe.instructions.forEach((instruction) => {
+        const item = document.createElement("li");
+        item.textContent = instruction;
+        instructions.appendChild(item);
+    });
+    detailsSection.hidden = false;
+    detailsSection.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
 function openBoard(board) {
+    closeOpenSections();
     const boardSection = document.querySelector("#board-recipes-section");
     const boardName = document.querySelector("#selected-board-name");
     const recipesList = document.querySelector("#board-recipes-list");
@@ -101,7 +169,42 @@ function openBoard(board) {
             card.className = "recipe-card";
             const recipeTitle = document.createElement("h3");
             recipeTitle.textContent = recipeName;
-            card.appendChild(recipeTitle);
+            const viewButton = document.createElement("button");
+            viewButton.type = "button";
+            viewButton.className = "view-recipe-button";
+            viewButton.textContent = "View Recipe";
+            viewButton.addEventListener("click", () => {
+                const matchedRecipe = recipes.find((recipe) => recipe.name === recipeName);
+                if (!matchedRecipe) {
+                    alert("Recipe details could not be found.");
+                    return;
+                }
+                displayBoardRecipe(matchedRecipe);
+            });
+            const removeButton = document.createElement("button");
+            removeButton.type = "button";
+            removeButton.className = "remove-recipe-button";
+            removeButton.textContent = "Remove from Board";
+            removeButton.addEventListener("click", () => {
+                const confirmed = confirm(`Remove "${recipeName}" from "${board.name}"?`);
+                if (!confirmed) {
+                    return;
+                }
+                // Remove the recipe from this board
+                board.recipes = board.recipes.filter((name) => name !== recipeName);
+                // Save the updated boards
+                localStorage.setItem("recipeBoards", JSON.stringify(savedBoards));
+                // Update the recipe count on the board card
+                const boardCard = document.querySelector(`.board-card[data-board-id="${board.id}"]`);
+                const recipeCount = boardCard?.querySelector(".board-info p");
+                if (recipeCount) {
+                    recipeCount.textContent =
+                        `${board.recipes.length} Recipes`;
+                }
+                // Refresh the displayed recipes
+                openBoard(board);
+            });
+            card.append(recipeTitle, viewButton, removeButton);
             recipesList.appendChild(card);
         });
     }
@@ -365,9 +468,97 @@ cancelEditButton?.addEventListener("click", () => {
 });
 const closeBoardButton = document.querySelector("#close-board-recipes");
 closeBoardButton?.addEventListener("click", () => {
-    const boardSection = document.querySelector("#board-recipes-section");
-    if (boardSection) {
-        boardSection.hidden = true;
+    closeOpenSections();
+});
+const closeBoardRecipeButton = document.querySelector("#close-board-recipe-details");
+closeBoardRecipeButton?.addEventListener("click", () => {
+    const detailsSection = document.querySelector("#board-recipe-details");
+    if (detailsSection) {
+        detailsSection.hidden = true;
     }
 });
-export {};
+/* Create Recipe Form Controls */
+const createRecipeButton = document.querySelector("#create-recipe-button");
+const createRecipeForm = document.querySelector("#create-recipe-form");
+const cancelRecipeButton = document.querySelector("#cancel-recipe-button");
+const newRecipeForm = document.querySelector("#new-recipe-form");
+// Open the Create Recipe form
+createRecipeButton?.addEventListener("click", () => {
+    if (!createRecipeForm)
+        return;
+    // Close the Create Board and Edit Board forms
+    if (createBoardForm)
+        createBoardForm.hidden = true;
+    if (editBoardForm)
+        editBoardForm.hidden = true;
+    createRecipeForm.hidden = false;
+    createRecipeForm.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+});
+// Close the Create Recipe form
+cancelRecipeButton?.addEventListener("click", () => {
+    if (createRecipeForm) {
+        createRecipeForm.hidden = true;
+    }
+    newRecipeForm?.reset();
+});
+/* Save a Newly Created Recipe */
+newRecipeForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const nameInput = document.querySelector("#recipe-name");
+    const categoryInput = document.querySelector("#recipe-category");
+    const timeInput = document.querySelector("#recipe-time");
+    const difficultyInput = document.querySelector("#recipe-difficulty");
+    const ratingInput = document.querySelector("#recipe-rating");
+    const ingredientsInput = document.querySelector("#recipe-ingredients");
+    const instructionsInput = document.querySelector("#recipe-instructions");
+    if (!nameInput || !categoryInput || !timeInput ||
+        !difficultyInput || !ratingInput ||
+        !ingredientsInput || !instructionsInput) {
+        return;
+    }
+    const name = nameInput.value.trim();
+    const time = Number(timeInput.value);
+    const ingredients = ingredientsInput.value
+        .split("\n")
+        .map((ingredient) => ingredient.trim())
+        .filter((ingredient) => ingredient.length > 0);
+    const instructions = instructionsInput.value
+        .split("\n")
+        .map((instruction) => instruction.trim())
+        .filter((instruction) => instruction.length > 0);
+    if (!name || !categoryInput.value || !difficultyInput.value ||
+        !ratingInput.value || !Number.isFinite(time) || time < 1 ||
+        ingredients.length === 0 || instructions.length === 0) {
+        alert("Please complete all recipe fields.");
+        return;
+    }
+    const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+    const duplicateRecipe = savedRecipes.some((recipe) => recipe.name.toLowerCase() === name.toLowerCase());
+    if (duplicateRecipe) {
+        alert("A saved recipe with this name already exists.");
+        return;
+    }
+    const newRecipe = {
+        name: name,
+        category: categoryInput.value,
+        time: time,
+        difficulty: difficultyInput.value,
+        rating: ratingInput.value,
+        ingredients: ingredients,
+        instructions: instructions
+    };
+    savedRecipes.push(newRecipe);
+    localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes));
+    displaySavedRecipes();
+    newRecipeForm.reset();
+    if (createRecipeForm) {
+        createRecipeForm.hidden = true;
+    }
+    document.querySelector("#saved-recipes-list")?.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+});

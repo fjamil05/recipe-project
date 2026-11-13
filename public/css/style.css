@@ -999,3 +999,130 @@ header {
 #close-board-recipes:hover {
     background-color: #d96b38;
 }
+
+
+/* Remove Recipe Button */
+
+.remove-recipe-button {
+    margin-top: 12px;
+    padding: 9px 15px;
+    background-color: white;
+    color: #c44e36;
+    border: 1px solid #c44e36;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.remove-recipe-button:hover {
+    background-color: #fff0e6;
+}
+
+/* Recipe Details Close Button */
+
+#close-board-recipe-details {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 12px 24px;
+
+    background-color: #e88958;
+    color: white;
+    border: none;
+    border-radius: 10px;
+
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+
+    transition: background-color 0.2s ease;
+}
+
+#close-board-recipe-details:hover {
+    background-color: #d96b38;
+}
+
+#close-board-recipe-details:focus-visible {
+    outline: 3px solid #9b4d2a;
+    outline-offset: 3px;
+}
+
+/* Saved Recipes Heading */
+
+.saved-recipes-section > h2 {
+    color: #f4511e;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 22px;
+    line-height: 1.6;
+    margin-top: 45px;
+    margin-bottom: 30px;
+}
+
+/* Create Recipe Form */
+
+#new-recipe-form {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* Recipe form labels */
+
+#new-recipe-form label {
+    color: #a94e2e;
+    font-size: 17px;
+    font-weight: 600;
+    margin-top: 8px;
+}
+
+/* Recipe form inputs, dropdowns, and text areas */
+
+#new-recipe-form input,
+#new-recipe-form select,
+#new-recipe-form textarea {
+    width: 100%;
+    max-width: 500px;
+    padding: 14px 16px;
+    border: 2px solid #efb49e;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #333333;
+    font-size: 16px;
+    font-family: inherit;
+    box-sizing: border-box;
+    outline: none;
+}
+
+/* Highlight fields when selected */
+
+#new-recipe-form input:focus,
+#new-recipe-form select:focus,
+#new-recipe-form textarea:focus {
+    border-color: #e95322;
+    box-shadow: 0 0 0 3px rgba(233, 83, 34, 0.12);
+}
+
+/* Allow instructions and ingredients boxes to grow vertically */
+
+#new-recipe-form textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* Cancel Recipe button */
+
+#cancel-recipe-button {
+    background-color: #ffffff;
+    color: #a94e2e;
+    border: 2px solid #efb49e;
+    border-radius: 10px;
+    padding: 13px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#cancel-recipe-button:hover {
+    background-color: #ffe6d9;
+}
