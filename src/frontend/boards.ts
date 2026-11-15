@@ -29,14 +29,26 @@ function displaySavedRecipes(): void {
 
     savedRecipesList.replaceChildren();
 
-    if (savedRecipes.length === 0) {
+
+const boards: RecipeBoard[] = JSON.parse(
+    localStorage.getItem("recipeBoards") ?? "[]"
+);
+
+const unsortedRecipes = savedRecipes.filter((recipe) => {
+    return !boards.some((board) =>
+        board.recipes.includes(recipe.name)
+    );
+});
+
+
+    if (unsortedRecipes.length === 0) {
         emptyMessage.style.display = "";
         return;
     }
 
     emptyMessage.style.display = "none";
 
-    savedRecipes.forEach((recipe) => {
+    unsortedRecipes.forEach((recipe) => {
         const card = document.createElement("article");
         card.className = "recipe-card";
 
@@ -83,12 +95,116 @@ addToBoardButton.textContent = "Add to Board";
 
 
 
+const boardPanel = document.createElement("div");
+boardPanel.className = "recipe-board-panel";
+boardPanel.hidden = true;
+
+const boardLabel = document.createElement("label");
+boardLabel.textContent = "Choose a board";
+
+const boardSelect = document.createElement("select");
+boardSelect.className = "recipe-board-select";
+
+const boardActions = document.createElement("div");
+boardActions.className = "recipe-board-actions";
+
+const addToBoardConfirm = document.createElement("button");
+addToBoardConfirm.type = "button";
+addToBoardConfirm.className = "recipe-board-confirm";
+addToBoardConfirm.textContent = "Confirm";
+
+const cancelBoardSelection = document.createElement("button");
+cancelBoardSelection.type = "button";
+cancelBoardSelection.className = "recipe-board-cancel";
+cancelBoardSelection.textContent = "Cancel";
+
+boardActions.appendChild(addToBoardConfirm);
+boardActions.appendChild(cancelBoardSelection);
+
+boardPanel.appendChild(boardLabel);
+boardPanel.appendChild(boardSelect);
+boardPanel.appendChild(boardActions);
+
+addToBoardButton.addEventListener("click", () => {
+    const boards = savedBoards;
+
+    if (boards.length === 0) {
+        alert("You need to create a board first.");
+        return;
+    }
+
+    boardSelect.replaceChildren();
+
+    boards.forEach((board) => {
+        const option = document.createElement("option");
+        option.value = String(board.id);
+        option.textContent = board.name;
+        boardSelect.appendChild(option);
+    });
+
+    addToBoardButton.hidden = true;
+    boardPanel.hidden = false;
+});
+
+cancelBoardSelection.addEventListener("click", () => {
+    boardPanel.hidden = true;
+    addToBoardButton.hidden = false;
+});
+
+
+addToBoardConfirm.addEventListener("click", () => {
+    const selectedBoardId = Number(boardSelect.value);
+
+    const boards: RecipeBoard[] = JSON.parse(
+        localStorage.getItem("recipeBoards") ?? "[]"
+    );
+
+    const selectedBoard = boards.find(
+        (board) => board.id === selectedBoardId
+    );
+
+    if (!selectedBoard) {
+        alert("Please select a valid board.");
+        return;
+    }
+
+    if (selectedBoard.recipes.includes(recipe.name)) {
+        alert("This recipe is already in the selected board.");
+        return;
+    }
+
+    selectedBoard.recipes.push(recipe.name);
+
+    localStorage.setItem("recipeBoards", JSON.stringify(boards));
+
+    const boardCard = document.querySelector<HTMLElement>(
+        `.board-card[data-board-id="${selectedBoard.id}"]`
+    );
+
+    const recipeCount = boardCard?.querySelector(".board-info p");
+
+    if (recipeCount) {
+        recipeCount.textContent =
+            `${selectedBoard.recipes.length} Recipes`;
+    }
+
+    boardPanel.hidden = true;
+    addToBoardButton.hidden = false;
+
+    displaySavedRecipes();
+    
+    alert(`"${recipe.name}" was added to "${selectedBoard.name}"!`);
+});
+
+
 recipeInfo.appendChild(name);
 recipeInfo.appendChild(category);
 recipeInfo.appendChild(time);
 recipeInfo.appendChild(difficulty);
+
 recipeInfo.appendChild(viewButton);
 recipeInfo.appendChild(addToBoardButton);
+recipeInfo.appendChild(boardPanel);
 
 
 card.appendChild(recipeInfo);
@@ -310,10 +426,15 @@ viewButton.type = "button";
 viewButton.className = "view-recipe-button";
 viewButton.textContent = "View Recipe";
 
+
 viewButton.addEventListener("click", () => {
-    const matchedRecipe = recipes.find(
-        (recipe) => recipe.name === recipeName
+    const savedRecipes: SavedRecipe[] = JSON.parse(
+        localStorage.getItem("savedRecipes") ?? "[]"
     );
+
+    const matchedRecipe =
+        savedRecipes.find((recipe) => recipe.name === recipeName) ??
+        recipes.find((recipe) => recipe.name === recipeName);
 
     if (!matchedRecipe) {
         alert("Recipe details could not be found.");
@@ -322,6 +443,7 @@ viewButton.addEventListener("click", () => {
 
     displayBoardRecipe(matchedRecipe);
 });
+
 
 
     const removeButton = document.createElement("button");

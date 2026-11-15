@@ -1126,3 +1126,101 @@ header {
 #cancel-recipe-button:hover {
     background-color: #ffe6d9;
 }
+/* Hide recipe board selection until requested */
+
+#saved-recipes-list select[hidden],
+#saved-recipes-list button[hidden] {
+    display: none;
+}
+
+/* Add Recipe to Board Panel */
+
+#saved-recipes-list .recipe-board-panel[hidden],
+#saved-recipes-list .view-recipe-button[hidden] {
+    display: none;
+}
+
+.recipe-board-panel {
+    margin-top: 18px;
+    padding: 18px;
+    background-color: #fff0e6;
+    border: 1px solid #efb49e;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.recipe-board-panel label {
+    color: #a94e2e;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.recipe-board-select {
+    width: 100%;
+    padding: 12px;
+    background-color: white;
+    border: 2px solid #efb49e;
+    border-radius: 8px;
+    color: #333333;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.recipe-board-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.recipe-board-confirm,
+.recipe-board-cancel {
+    flex: 1;
+    padding: 12px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.recipe-board-confirm {
+    background-color: #f5a23d;
+    color: white;
+    border: 1px solid #e68b20;
+}
+
+.recipe-board-cancel {
+    background-color: white;
+    color: #a94e2e;
+    border: 1px solid #efb49e;
+}
+
+.recipe-board-confirm:hover {
+    background-color: #e98c22;
+}
+
+.recipe-board-cancel:hover {
+    background-color: #ffe1d1;
+}
+
+/* Saved Recipe Card Buttons */
+
+#saved-recipes-list .recipe-info > .view-recipe-button {
+    display: block;
+    width: fit-content;
+    margin-top: 12px;
+}
+
+#saved-recipes-list .recipe-info > .view-recipe-button:nth-of-type(2) {
+    background-color: #fff7f1;
+    color: #d85b2b;
+    border: 2px solid #e9a184;
+}
+
+#saved-recipes-list .recipe-info > .view-recipe-button:nth-of-type(2):hover {
+    background-color: #ffe5d6;
+}
+
+#saved-recipes-list .recipe-info > .view-recipe-button[hidden] {
+    display: none;
+}
