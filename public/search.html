@@ -28,7 +28,7 @@
         
         </section>
 
-        <section class="recipe-filters">
+       
             
 <section class="recipe-filters">
     <select id="category-filter" aria-label="Recipe category">
@@ -38,6 +38,8 @@
         <option value="Dinner">Dinner</option>
         <option value="Dessert">Dessert</option>
         <option value="Seafood">Seafood</option>
+        <option value="Snack">Snack</option>
+        <option value="Other">Other</option>
     </select>
 
     <select id="difficulty-filter" aria-label="Difficulty">
@@ -53,52 +55,17 @@
         <option value="30">Under 30 Minutes</option>
         <option value="60">Under 60 Minutes</option>
     </select>
-</section>
 
-        </section>
+
+    </section>
 
         <h2 class="results-heading">Recipes</h2>
 
         <section class="recipe-grid">
 
-            <article class="recipe-card">
-                <div class="recipe-image">🥞</div>
-                <div class="recipe-info">
-                    <h3>Fluffy Pancakes</h3>
-                    <p>Breakfast</p>
-                    <p>Time: 20 minutes</p>
-                    <p>Difficulty: Easy</p>
-                    <button type="button" class="view-recipe-button">
-                        View Recipe
-                    </button>
-                </div>
-            </article>
-
-            <article class="recipe-card">
-                <div class="recipe-image">🍝</div>
-                <div class="recipe-info">
-                    <h3>Spaghetti</h3>
-                    <p>Dinner</p>
-                    <p>Time: 35 minutes</p>
-                    <p>Difficulty: Easy</p>
-                    <button type="button" class="view-recipe-button">
-                        View Recipe
-                    </button>
-                </div>
-            </article>
-
-            <article class="recipe-card">
-                <div class="recipe-image">🍪</div>
-                <div class="recipe-info">
-                    <h3>Chocolate Chip Cookies</h3>
-                    <p>Dessert</p>
-                    <p>Time: 30 minutes</p>
-                    <p>Difficulty: Medium</p>
-                    <button type="button" class="view-recipe-button">
-                        View Recipe
-                    </button>
-                </div>
-            </article>
+            <p id="no-search-results">
+                No recipes found.
+            </p>
 
         </section>
 
@@ -129,44 +96,48 @@
         <ul id="detail-ingredients"></ul>
 
         
+
 <h4>Instructions</h4>
 <ol id="detail-instructions"></ol>
 
 <button type="button" class="save-recipe-button">
-    Save to Board
+    Add to Board
 </button>
 
-<!-- Choose which board receives the recipe -->
 <div id="save-to-board-panel" class="save-to-board-panel" hidden>
-    <h4>Choose a Board</h4>
+    <h3>Save Recipe</h3>
+    <p>Select a location for this recipe.</p>
 
-    <label for="save-board-select">
-        Select which board should receive this recipe:
-    </label>
+    <label class="save-destination-option">
+    <input type="radio" name="save-destination"
+           value="unsorted" checked>
+    Unsorted Recipes
+</label>
 
-    <select id="save-board-select">
-        <option value="">Select a board</option>
-    </select>
+<label class="save-destination-option">
+    <input type="radio" name="save-destination"
+           value="board">
+    Existing Board
+</label>
+
+    <div id="save-board-selection" hidden>
+        <label for="save-board-select">Select a Board</label>
+        <select id="save-board-select"></select>
+    </div>
+
+    <p id="save-board-message"></p>
 
     <div class="board-form-buttons">
-        <button
-            type="button"
-            id="confirm-save-board"
-            class="create-board-button"
-        >
-            Save Recipe
+        <button type="button" id="confirm-save-board">
+            Add to Board
         </button>
 
-        <button
-            type="button"
-            id="cancel-save-board"
-        >
+        <button type="button" id="cancel-save-board">
             Cancel
         </button>
     </div>
-
-    <p id="save-board-message" aria-live="polite"></p>
 </div>
+
 
 </div>
 </section>

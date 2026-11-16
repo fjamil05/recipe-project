@@ -29,6 +29,105 @@ function displaySavedRecipes() {
         time.textContent = `Time: ${recipe.time} minutes`;
         const difficulty = document.createElement("p");
         difficulty.textContent = `Difficulty: ${recipe.difficulty}`;
+        // Three-dot menu for recipe options
+        const recipeMenu = document.createElement("div");
+        recipeMenu.className = "board-menu";
+        const menuButton = document.createElement("button");
+        menuButton.type = "button";
+        menuButton.className = "board-menu-button";
+        menuButton.textContent = "⋮";
+        menuButton.setAttribute("aria-label", "Recipe options");
+        menuButton.setAttribute("aria-expanded", "false");
+        const menuOptions = document.createElement("div");
+        menuOptions.className = "board-menu-options";
+        menuOptions.hidden = true;
+        const editRecipeButton = document.createElement("button");
+        editRecipeButton.type = "button";
+        editRecipeButton.textContent = "Edit Recipe";
+        // Open the Edit Recipe form
+        editRecipeButton.addEventListener("click", () => {
+            const editForm = document.querySelector("#edit-recipe-form");
+            const nameInput = document.querySelector("#edit-recipe-name");
+            const categoryInput = document.querySelector("#edit-recipe-category");
+            const timeInput = document.querySelector("#edit-recipe-time");
+            const difficultyInput = document.querySelector("#edit-recipe-difficulty");
+            const ratingInput = document.querySelector("#edit-recipe-rating");
+            const ingredientsInput = document.querySelector("#edit-recipe-ingredients");
+            const instructionsInput = document.querySelector("#edit-recipe-instructions");
+            if (!editForm || !nameInput || !categoryInput ||
+                !timeInput || !difficultyInput || !ratingInput ||
+                !ingredientsInput || !instructionsInput) {
+                return;
+            }
+            // Remember the original recipe name
+            editForm.dataset.recipeName = recipe.name;
+            // Fill the form with the recipe's current information
+            nameInput.value = recipe.name;
+            categoryInput.value = recipe.category;
+            timeInput.value = String(recipe.time);
+            difficultyInput.value = recipe.difficulty;
+            ratingInput.value = recipe.rating;
+            ingredientsInput.value = recipe.ingredients.join("\n");
+            instructionsInput.value = recipe.instructions.join("\n");
+            // Close the menu
+            menuOptions.hidden = true;
+            menuButton.setAttribute("aria-expanded", "false");
+            // Hide other forms
+            if (createRecipeForm)
+                createRecipeForm.hidden = true;
+            if (createBoardForm)
+                createBoardForm.hidden = true;
+            if (editBoardForm)
+                editBoardForm.hidden = true;
+            // Show Edit Recipe
+            editForm.hidden = false;
+            editForm.scrollIntoView({
+                behavior: "smooth",
+                block: "start"
+            });
+        });
+        const deleteRecipeButton = document.createElement("button");
+        deleteRecipeButton.type = "button";
+        deleteRecipeButton.textContent = "Delete Recipe";
+        deleteRecipeButton.className = "delete-board-option";
+        // Permanently delete the selected recipe
+        deleteRecipeButton.addEventListener("click", () => {
+            const confirmed = confirm(`Are you sure you want to permanently delete "${recipe.name}"?`);
+            if (!confirmed) {
+                return;
+            }
+            // Remove the recipe from saved recipes
+            const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+            const updatedRecipes = savedRecipes.filter((savedRecipe) => savedRecipe.name !== recipe.name);
+            localStorage.setItem("savedRecipes", JSON.stringify(updatedRecipes));
+            // Remove the recipe from every board
+            savedBoards.forEach((board) => {
+                board.recipes = board.recipes.filter((name) => name !== recipe.name);
+            });
+            localStorage.setItem("recipeBoards", JSON.stringify(savedBoards));
+            // Update recipe counts on the board cards
+            savedBoards.forEach((board) => {
+                const boardCard = document.querySelector(`.board-card[data-board-id="${board.id}"]`);
+                const recipeCount = boardCard?.querySelector(".board-info p");
+                if (recipeCount) {
+                    recipeCount.textContent =
+                        `${board.recipes.length} Recipes`;
+                }
+            });
+            // Close any open recipe details
+            closeOpenSections();
+            // Refresh the Unsorted Recipes section
+            displaySavedRecipes();
+            alert(`"${recipe.name}" was deleted successfully.`);
+        });
+        menuButton.addEventListener("click", () => {
+            menuOptions.hidden = !menuOptions.hidden;
+            menuButton.setAttribute("aria-expanded", String(!menuOptions.hidden));
+        });
+        menuOptions.appendChild(editRecipeButton);
+        menuOptions.appendChild(deleteRecipeButton);
+        recipeMenu.appendChild(menuButton);
+        recipeMenu.appendChild(menuOptions);
         const viewButton = document.createElement("button");
         viewButton.type = "button";
         viewButton.className = "view-recipe-button";
@@ -101,7 +200,14 @@ function displaySavedRecipes() {
                 alert("This recipe is already in the selected board.");
                 return;
             }
+            // Add the recipe to the selected board
             selectedBoard.recipes.push(recipe.name);
+            // Keep the board objects used by the page synchronized
+            const displayedBoard = savedBoards.find((board) => board.id === selectedBoardId);
+            if (displayedBoard) {
+                displayedBoard.recipes = [...selectedBoard.recipes];
+            }
+            // Save the updated boards
             localStorage.setItem("recipeBoards", JSON.stringify(boards));
             const boardCard = document.querySelector(`.board-card[data-board-id="${selectedBoard.id}"]`);
             const recipeCount = boardCard?.querySelector(".board-info p");
@@ -118,6 +224,7 @@ function displaySavedRecipes() {
         recipeInfo.appendChild(category);
         recipeInfo.appendChild(time);
         recipeInfo.appendChild(difficulty);
+        recipeInfo.appendChild(recipeMenu);
         recipeInfo.appendChild(viewButton);
         recipeInfo.appendChild(addToBoardButton);
         recipeInfo.appendChild(boardPanel);
@@ -241,6 +348,115 @@ function openBoard(board) {
             card.className = "recipe-card";
             const recipeTitle = document.createElement("h3");
             recipeTitle.textContent = recipeName;
+            // Three-dot menu for recipes inside boards
+            const recipeMenu = document.createElement("div");
+            recipeMenu.className = "board-menu";
+            const menuButton = document.createElement("button");
+            menuButton.type = "button";
+            menuButton.className = "board-menu-button";
+            menuButton.textContent = "⋮";
+            menuButton.setAttribute("aria-label", "Recipe options");
+            menuButton.setAttribute("aria-expanded", "false");
+            const menuOptions = document.createElement("div");
+            menuOptions.className = "board-menu-options";
+            menuOptions.hidden = true;
+            const editRecipeButton = document.createElement("button");
+            editRecipeButton.type = "button";
+            editRecipeButton.textContent = "Edit Recipe";
+            // Edit a recipe from inside a board
+            editRecipeButton.addEventListener("click", () => {
+                const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+                const recipe = savedRecipes.find((savedRecipe) => savedRecipe.name === recipeName);
+                if (!recipe) {
+                    alert("This recipe cannot be edited because its saved details were not found.");
+                    return;
+                }
+                const editForm = document.querySelector("#edit-recipe-form");
+                const nameInput = document.querySelector("#edit-recipe-name");
+                const categoryInput = document.querySelector("#edit-recipe-category");
+                const timeInput = document.querySelector("#edit-recipe-time");
+                const difficultyInput = document.querySelector("#edit-recipe-difficulty");
+                const ratingInput = document.querySelector("#edit-recipe-rating");
+                const ingredientsInput = document.querySelector("#edit-recipe-ingredients");
+                const instructionsInput = document.querySelector("#edit-recipe-instructions");
+                if (!editForm || !nameInput || !categoryInput ||
+                    !timeInput || !difficultyInput || !ratingInput ||
+                    !ingredientsInput || !instructionsInput) {
+                    return;
+                }
+                // Remember which recipe is being edited
+                editForm.dataset.recipeName = recipe.name;
+                // Fill in the recipe's existing information
+                nameInput.value = recipe.name;
+                categoryInput.value = recipe.category;
+                timeInput.value = String(recipe.time);
+                difficultyInput.value = recipe.difficulty;
+                ratingInput.value = recipe.rating;
+                ingredientsInput.value = recipe.ingredients.join("\n");
+                instructionsInput.value = recipe.instructions.join("\n");
+                // Close the three-dot menu
+                menuOptions.hidden = true;
+                menuButton.setAttribute("aria-expanded", "false");
+                // Hide other forms
+                if (createRecipeForm)
+                    createRecipeForm.hidden = true;
+                if (createBoardForm)
+                    createBoardForm.hidden = true;
+                if (editBoardForm)
+                    editBoardForm.hidden = true;
+                // Open the Edit Recipe form
+                editForm.hidden = false;
+                editForm.scrollIntoView({
+                    behavior: "smooth",
+                    block: "start"
+                });
+            });
+            const deleteRecipeButton = document.createElement("button");
+            deleteRecipeButton.type = "button";
+            deleteRecipeButton.textContent = "Delete Recipe";
+            deleteRecipeButton.className = "delete-board-option";
+            // Permanently delete a recipe from all saved recipes and boards
+            deleteRecipeButton.addEventListener("click", () => {
+                const confirmed = confirm(`Are you sure you want to permanently delete "${recipeName}"?`);
+                if (!confirmed) {
+                    return;
+                }
+                // Remove the recipe from savedRecipes
+                const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+                const updatedRecipes = savedRecipes.filter((recipe) => recipe.name !== recipeName);
+                if (updatedRecipes.length === savedRecipes.length) {
+                    alert("This recipe was not found in your saved recipes.");
+                    return;
+                }
+                localStorage.setItem("savedRecipes", JSON.stringify(updatedRecipes));
+                // Remove the recipe from every board
+                savedBoards.forEach((savedBoard) => {
+                    savedBoard.recipes = savedBoard.recipes.filter((name) => name !== recipeName);
+                });
+                localStorage.setItem("recipeBoards", JSON.stringify(savedBoards));
+                // Update recipe counts on all board cards
+                savedBoards.forEach((savedBoard) => {
+                    const boardCard = document.querySelector(`.board-card[data-board-id="${savedBoard.id}"]`);
+                    const recipeCount = boardCard?.querySelector(".board-info p");
+                    if (recipeCount) {
+                        recipeCount.textContent =
+                            `${savedBoard.recipes.length} Recipes`;
+                    }
+                });
+                // Refresh Unsorted Recipes
+                displaySavedRecipes();
+                // Close any open recipe details
+                closeOpenSections();
+                // Refresh the current board
+                openBoard(board);
+                alert(`"${recipeName}" was deleted successfully.`);
+            });
+            menuButton.addEventListener("click", () => {
+                menuOptions.hidden = !menuOptions.hidden;
+                menuButton.setAttribute("aria-expanded", String(!menuOptions.hidden));
+            });
+            menuOptions.append(editRecipeButton, deleteRecipeButton);
+            recipeMenu.append(menuButton, menuOptions);
             const viewButton = document.createElement("button");
             viewButton.type = "button";
             viewButton.className = "view-recipe-button";
@@ -275,10 +491,12 @@ function openBoard(board) {
                     recipeCount.textContent =
                         `${board.recipes.length} Recipes`;
                 }
-                // Refresh the displayed recipes
+                // Refresh the current board
                 openBoard(board);
+                // Refresh Unsorted Recipes immediately
+                displaySavedRecipes();
             });
-            card.append(recipeTitle, viewButton, removeButton);
+            card.append(recipeTitle, recipeMenu, viewButton, removeButton);
             recipesList.appendChild(card);
         });
     }
@@ -635,4 +853,106 @@ newRecipeForm?.addEventListener("submit", (event) => {
         behavior: "smooth",
         block: "start"
     });
+});
+/* Edit Recipe Form Controls */
+const editRecipeForm = document.querySelector("#edit-recipe-form");
+const recipeEditForm = document.querySelector("#recipe-edit-form");
+const cancelRecipeEditButton = document.querySelector("#cancel-recipe-edit");
+// Cancel editing without saving
+cancelRecipeEditButton?.addEventListener("click", () => {
+    if (editRecipeForm) {
+        editRecipeForm.hidden = true;
+        delete editRecipeForm.dataset.recipeName;
+    }
+    recipeEditForm?.reset();
+});
+// Save changes to an existing recipe
+recipeEditForm?.addEventListener("submit", (event) => {
+    event.preventDefault();
+    if (!editRecipeForm) {
+        return;
+    }
+    const originalName = editRecipeForm.dataset.recipeName;
+    if (!originalName) {
+        alert("No recipe was selected for editing.");
+        return;
+    }
+    const nameInput = document.querySelector("#edit-recipe-name");
+    const categoryInput = document.querySelector("#edit-recipe-category");
+    const timeInput = document.querySelector("#edit-recipe-time");
+    const difficultyInput = document.querySelector("#edit-recipe-difficulty");
+    const ratingInput = document.querySelector("#edit-recipe-rating");
+    const ingredientsInput = document.querySelector("#edit-recipe-ingredients");
+    const instructionsInput = document.querySelector("#edit-recipe-instructions");
+    if (!nameInput || !categoryInput || !timeInput ||
+        !difficultyInput || !ratingInput ||
+        !ingredientsInput || !instructionsInput) {
+        return;
+    }
+    const updatedName = nameInput.value.trim();
+    const updatedTime = Number(timeInput.value);
+    const updatedIngredients = ingredientsInput.value
+        .split("\n")
+        .map((ingredient) => ingredient.trim())
+        .filter((ingredient) => ingredient.length > 0);
+    const updatedInstructions = instructionsInput.value
+        .split("\n")
+        .map((instruction) => instruction.trim())
+        .filter((instruction) => instruction.length > 0);
+    if (!updatedName || !categoryInput.value ||
+        !difficultyInput.value || !ratingInput.value ||
+        !Number.isFinite(updatedTime) || updatedTime < 1 ||
+        updatedIngredients.length === 0 ||
+        updatedInstructions.length === 0) {
+        alert("Please complete all recipe fields.");
+        return;
+    }
+    const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+    const recipeIndex = savedRecipes.findIndex((recipe) => recipe.name === originalName);
+    if (recipeIndex === -1) {
+        alert("The recipe could not be found.");
+        return;
+    }
+    // Prevent two recipes from having the same name
+    const duplicateName = savedRecipes.some((recipe, index) => index !== recipeIndex &&
+        recipe.name.toLowerCase() === updatedName.toLowerCase());
+    if (duplicateName) {
+        alert("Another saved recipe already has this name.");
+        return;
+    }
+    // Update the recipe's information
+    const updatedRecipe = {
+        name: updatedName,
+        category: categoryInput.value,
+        time: updatedTime,
+        difficulty: difficultyInput.value,
+        rating: ratingInput.value,
+        ingredients: updatedIngredients,
+        instructions: updatedInstructions
+    };
+    savedRecipes[recipeIndex] = updatedRecipe;
+    // Update recipe names in all boards
+    const boards = JSON.parse(localStorage.getItem("recipeBoards") ?? "[]");
+    boards.forEach((board) => {
+        board.recipes = board.recipes.map((name) => name === originalName ? updatedName : name);
+    });
+    // Save the changes
+    localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes));
+    localStorage.setItem("recipeBoards", JSON.stringify(boards));
+    // Keep the existing board objects synchronized
+    savedBoards.forEach((board) => {
+        const updatedBoard = boards.find((item) => item.id === board.id);
+        if (updatedBoard) {
+            board.recipes = updatedBoard.recipes;
+        }
+    });
+    // Refresh the Unsorted Recipes cards
+    displaySavedRecipes();
+    // Close any previously displayed recipe details
+    closeOpenSections();
+    // Close and reset the editing form
+    editRecipeForm.hidden = true;
+    delete editRecipeForm.dataset.recipeName;
+    recipeEditForm.reset();
+    alert(`"${updatedName}" was updated successfully!`);
 });

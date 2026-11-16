@@ -1224,3 +1224,236 @@ header {
 #saved-recipes-list .recipe-info > .view-recipe-button[hidden] {
     display: none;
 }
+
+/* Position the recipe options menu inside each recipe tile */
+#saved-recipes-list .recipe-card {
+    position: relative;
+}
+
+#saved-recipes-list .recipe-card .board-menu {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 5;
+}
+
+#saved-recipes-list .recipe-card .board-menu-options {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 10;
+}
+
+/* Edit Recipe Form Styling */
+
+#edit-recipe-form {
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 40px;
+    background-color: #fff7f1;
+    border: 3px solid #efb49d;
+    border-radius: 25px;
+}
+
+#edit-recipe-form h2 {
+    color: #f4511e;
+    font-size: 32px;
+    margin-bottom: 30px;
+}
+
+/* Arrange labels and fields vertically */
+#recipe-edit-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Labels */
+#recipe-edit-form label {
+    display: block;
+    font-size: 17px;
+    font-weight: 600;
+    color: #a95435;
+    margin-top: 10px;
+}
+
+/* Text fields, dropdowns, and text areas */
+#recipe-edit-form input,
+#recipe-edit-form select,
+#recipe-edit-form textarea {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 13px 15px;
+    font-size: 16px;
+    font-family: inherit;
+    background-color: #ffffff;
+    border: 2px solid #e9b5a2;
+    border-radius: 12px;
+    color: #333333;
+}
+
+/* Highlight the active field */
+#recipe-edit-form input:focus,
+#recipe-edit-form select:focus,
+#recipe-edit-form textarea:focus {
+    outline: none;
+    border-color: #f59e39;
+    box-shadow: 0 0 0 3px rgba(245, 158, 57, 0.15);
+}
+
+/* Give ingredients and instructions more room */
+#recipe-edit-form textarea {
+    min-height: 140px;
+    resize: vertical;
+    line-height: 1.5;
+}
+
+/* Keep Save Changes and Cancel next to each other */
+#recipe-edit-form .board-form-buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+/* Style the Cancel button */
+#cancel-recipe-edit {
+    padding: 13px 25px;
+    background-color: #ffffff;
+    color: #a95435;
+    border: 2px solid #e9b5a2;
+    border-radius: 12px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#cancel-recipe-edit:hover {
+    background-color: #ffe5d6;
+}
+
+/* Preserve the hidden state */
+#edit-recipe-form[hidden] {
+    display: none;
+}
+
+
+/* Three-dot menu for recipes inside boards */
+#board-recipes-list .recipe-card {
+    position: relative;
+}
+
+#board-recipes-list .recipe-card .board-menu {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    z-index: 5;
+}
+
+#board-recipes-list .recipe-card .board-menu-options {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    z-index: 10;
+}
+
+#board-recipes-list .recipe-card .board-menu-options[hidden] {
+    display: none;
+}
+
+
+/* Weekly Planner - Responsive Headings */
+
+.task-column h3 {
+    text-align: center;
+    margin: 0;
+    width: 100%;
+    min-width: 0;
+}
+
+.planner-day-name {
+    display: block;
+    font-size: clamp(14px, 1.35vw, 19px);
+    font-weight: 700;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+.planner-day-date {
+    display: block;
+    font-size: clamp(13px, 1.15vw, 17px);
+    font-weight: 500;
+    margin-top: 6px;
+    line-height: 1.3;
+    white-space: nowrap;
+}
+
+
+/* Weekly Planner - Responsive Layout */
+
+.task-board {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.task-column {
+    min-width: 145px;
+    box-sizing: border-box;
+}
+
+
+/* Weekly Planner - Add Recipe */
+
+.add-planned-recipe {
+    width: 100%;
+    margin-top: 15px;
+    padding: 10px;
+    border: 1px dashed #f26a3d;
+    border-radius: 8px;
+    background-color: transparent;
+    color: #e95525;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.add-planned-recipe:hover {
+    background-color: #ffe5d9;
+}
+
+.planner-recipe-form {
+    margin-top: 30px;
+    padding: 25px;
+    border: 1px solid #f3b29d;
+    border-radius: 12px;
+    background-color: #fff5ef;
+}
+
+.planner-recipe-form[hidden] {
+    display: none;
+}
+
+.planner-recipe-form h2 {
+    color: #e95525;
+    margin-bottom: 20px;
+}
+
+.planner-recipe-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.planner-recipe-form select {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #f3b29d;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 15px;
+}
+
+.planned-recipes {
+    margin-top: 15px;
+}

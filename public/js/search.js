@@ -11,6 +11,7 @@ function filterRecipes() {
     const selectedCategory = categoryFilter.value;
     const selectedDifficulty = difficultyFilter.value;
     const selectedTime = Number(timeFilter.value);
+    let visibleRecipes = 0;
     recipeCards.forEach((card) => {
         const recipeName = card.querySelector("h3")?.textContent ?? "";
         const recipeInfo = card.querySelector(".recipe-info");
@@ -30,14 +31,19 @@ function filterRecipes() {
         const matchesCategory = selectedCategory === "" || category === selectedCategory;
         const matchesDifficulty = selectedDifficulty === "" || difficulty === selectedDifficulty;
         const matchesTime = selectedTime === 0 || time < selectedTime;
-        card.style.display =
-            matchesSearch &&
-                matchesCategory &&
-                matchesDifficulty &&
-                matchesTime
-                ? ""
-                : "none";
+        const isVisible = matchesSearch &&
+            matchesCategory &&
+            matchesDifficulty &&
+            matchesTime;
+        card.style.display = isVisible ? "" : "none";
+        if (isVisible) {
+            visibleRecipes++;
+        }
     });
+    const noResultsMessage = document.querySelector("#no-search-results");
+    if (noResultsMessage) {
+        noResultsMessage.hidden = visibleRecipes > 0;
+    }
 }
 const searchInput = document.querySelector("#recipe-search");
 const categoryFilter = document.querySelector("#category-filter");
@@ -47,4 +53,38 @@ searchInput?.addEventListener("input", filterRecipes);
 categoryFilter?.addEventListener("change", filterRecipes);
 difficultyFilter?.addEventListener("change", filterRecipes);
 timeFilter?.addEventListener("change", filterRecipes);
+function loadSavedRecipes() {
+    const recipeGrid = document.querySelector(".recipe-grid");
+    if (!recipeGrid) {
+        return;
+    }
+    const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+    // Remove existing recipe cards
+    recipeGrid.querySelectorAll(".recipe-card").forEach((card) => {
+        card.remove();
+    });
+    savedRecipes.forEach((recipe) => {
+        const card = document.createElement("article");
+        card.className = "recipe-card";
+        const recipeInfo = document.createElement("div");
+        recipeInfo.className = "recipe-info";
+        const name = document.createElement("h3");
+        name.textContent = recipe.name;
+        const category = document.createElement("p");
+        category.textContent = recipe.category;
+        const time = document.createElement("p");
+        time.textContent = `Time: ${recipe.time} minutes`;
+        const difficulty = document.createElement("p");
+        difficulty.textContent = `Difficulty: ${recipe.difficulty}`;
+        const viewButton = document.createElement("button");
+        viewButton.type = "button";
+        viewButton.className = "view-recipe-button";
+        viewButton.textContent = "View Recipe";
+        recipeInfo.append(name, category, time, difficulty, viewButton);
+        card.appendChild(recipeInfo);
+        recipeGrid.appendChild(card);
+    });
+    filterRecipes();
+}
+loadSavedRecipes();
 export {};

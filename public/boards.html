@@ -172,6 +172,63 @@
 </section>
 
 
+<!-- Edit Recipe Form -->
+<section class="create-board-form" id="edit-recipe-form" hidden>
+    <h2>Edit Recipe</h2>
+
+    <form id="recipe-edit-form">
+
+        <label for="edit-recipe-name">Recipe Name</label>
+        <input type="text" id="edit-recipe-name" required>
+
+        <label for="edit-recipe-category">Category</label>
+        <select id="edit-recipe-category" required>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Dessert">Dessert</option>
+            <option value="Snack">Snack</option>
+            <option value="Other">Other</option>
+        </select>
+
+        <label for="edit-recipe-time">Cooking Time (minutes)</label>
+        <input type="number" id="edit-recipe-time" min="1" required>
+
+        <label for="edit-recipe-difficulty">Difficulty</label>
+        <select id="edit-recipe-difficulty" required>
+            <option value="Easy">Easy</option>
+            <option value="Medium">Medium</option>
+            <option value="Hard">Hard</option>
+        </select>
+
+        <label for="edit-recipe-rating">Enjoyment Rating</label>
+        <select id="edit-recipe-rating" required>
+            <option value="1/5">1/5</option>
+            <option value="2/5">2/5</option>
+            <option value="3/5">3/5</option>
+            <option value="4/5">4/5</option>
+            <option value="5/5">5/5</option>
+        </select>
+
+        <label for="edit-recipe-ingredients">Ingredients</label>
+        <textarea id="edit-recipe-ingredients" rows="5" required></textarea>
+
+        <label for="edit-recipe-instructions">Instructions</label>
+        <textarea id="edit-recipe-instructions" rows="6" required></textarea>
+
+        <div class="board-form-buttons">
+            <button type="submit" class="create-board-button">
+                Save Changes
+            </button>
+
+            <button type="button" id="cancel-recipe-edit">
+                Cancel
+            </button>
+        </div>
+
+    </form>
+</section>
+
 <!-- Edit Board Form -->
 <section class="create-board-form" id="edit-board-form" hidden>
     <h2>Edit Board</h2>

@@ -18,59 +18,115 @@
     <main class="dashboard-container">
         <h1>Weekly Tasks</h1>
 
-        <section class="week-header">
-            <button type="button" aria-label="Previous week">
-                &#10094;
-            </button>
+    <section class="week-header">
+        <button type="button" id="previous-week" aria-label="Previous week">
+            &#10094;
+        </button>
 
-            <h2>This Week</h2>
+        <h2 id="current-week">This Week</h2>
 
-            <button type="button" aria-label="Next week">
-                &#10095;
-            </button>
-        </section>
+        <button type="button" id="next-week" aria-label="Next week">
+            &#10095;
+        </button>
+    </section>
 
         <section class="task-board">
-            <div class="task-column">
-                <h3>Monday</h3>
-                <div class="task-card">
-                    <p>Breakfast</p>
-                    <span>Prepare Pancakes</span>
-                </div>
-            </div>
+    <div class="task-column">
+    <h3>Monday</h3>
 
-            <div class="task-column">
-                <h3>Tuesday</h3>
-                <div class="task-card">
-                    <p>Dinner</p>
-                    <span>Make Pasta</span>
-                </div>
-            </div>
+    <div class="planned-recipes"></div>
 
-            <div class="task-column">
-                <h3>Wednesday</h3>
-                <div class="task-card">
-                    <p>Lunch</p>
-                    <span>Prepare Salad</span>
-                </div>
-            </div>
+    <button type="button" class="add-planned-recipe">
+        + Add Recipe
+    </button>
+</div>
 
-            <div class="task-column">
-                <h3>Thursday</h3>
-            </div>
+    <div class="task-column">
+    <h3>Tuesday</h3>
 
-            <div class="task-column">
-                <h3>Friday</h3>
-            </div>
+    <div class="planned-recipes"></div>
 
-            <div class="task-column">
-                <h3>Saturday</h3>
-            </div>
+    <button type="button" class="add-planned-recipe">
+        + Add Recipe
+    </button>
+</div>
 
-            <div class="task-column">
-                <h3>Sunday</h3>
-            </div>
-        </section>
+    <div class="task-column">
+    <h3>Wednesday</h3>
+
+    <div class="planned-recipes"></div>
+
+    <button type="button" class="add-planned-recipe">
+        + Add Recipe
+    </button>
+</div>
+
+    <div class="task-column">
+    <h3>Thursday</h3>
+
+    <div class="planned-recipes"></div>
+
+    <button type="button" class="add-planned-recipe">
+        + Add Recipe
+    </button>
+</div>
+
+   <div class="task-column">
+    <h3>Friday</h3>
+
+    <div class="planned-recipes"></div>
+
+    <button type="button" class="add-planned-recipe">
+        + Add Recipe
+    </button>
+</div>
+
+    <div class="task-column">
+    <h3>Saturday</h3>
+
+    <div class="planned-recipes"></div>
+
+    <button type="button" class="add-planned-recipe">
+        + Add Recipe
+    </button>
+</div>
+
+    <div class="task-column">
+    <h3>Sunday</h3>
+
+    <div class="planned-recipes"></div>
+
+    <button type="button" class="add-planned-recipe">
+        + Add Recipe
+    </button>
+</div>
+</section>
+
+
+<section class="planner-recipe-form" id="planner-recipe-form" hidden>
+    <h2>Add Recipe to Planner</h2>
+
+    <form id="add-planner-recipe-form">
+        <label for="planner-recipe-select">
+            Select Recipe
+        </label>
+
+        <select id="planner-recipe-select" required>
+            <option value="">Choose a recipe</option>
+        </select>
+
+        <div class="board-form-buttons">
+            <button type="submit" class="create-board-button">
+                Add Recipe
+            </button>
+
+            <button type="button" id="cancel-planner-recipe">
+                Cancel
+            </button>
+        </div>
+    </form>
+</section>
+
 
         <section class="team-section">
             <h2>Team Members</h2>
@@ -94,5 +150,6 @@
         </section>
     </main>
 
+    <script type="module" src="js/dashboard.js"></script>
 </body>
 </html>
