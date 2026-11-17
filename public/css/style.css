@@ -1422,9 +1422,15 @@ header {
     background-color: #ffe5d9;
 }
 
+
+/* Weekly Planner - Recipe Form */
+
 .planner-recipe-form {
-    margin-top: 30px;
-    padding: 25px;
+    width: 100%;
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 28px;
+    box-sizing: border-box;
     border: 1px solid #f3b29d;
     border-radius: 12px;
     background-color: #fff5ef;
@@ -1436,7 +1442,8 @@ header {
 
 .planner-recipe-form h2 {
     color: #e95525;
-    margin-bottom: 20px;
+    font-size: 25px;
+    margin: 0 0 22px;
 }
 
 .planner-recipe-form form {
@@ -1445,15 +1452,573 @@ header {
     gap: 12px;
 }
 
+.planner-recipe-form label {
+    color: #4b403c;
+    font-size: 15px;
+    font-weight: 600;
+}
+
 .planner-recipe-form select {
     width: 100%;
-    padding: 12px;
+    padding: 12px 14px;
+    box-sizing: border-box;
     border: 1px solid #f3b29d;
     border-radius: 8px;
     background-color: white;
+    color: #333;
     font-size: 15px;
 }
 
+.planner-recipe-form .board-form-buttons {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.planner-recipe-form .board-form-buttons button {
+    width: auto;
+    min-width: 110px;
+    padding: 11px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.planner-recipe-form .create-board-button {
+    background-color: #f9a13b;
+    color: white;
+    border: 2px solid #ed8a18;
+}
+
+.planner-recipe-form #cancel-planner-recipe {
+    background-color: #f2e9e4;
+    color: #5d514c;
+    border: 1px solid #d8cbc5;
+}
+
+.planner-recipe-form #cancel-planner-recipe:hover {
+    background-color: #e7dad3;
+}
+
+@media (max-width: 650px) {
+    .planner-recipe-form {
+        padding: 20px;
+    }
+
+    .planner-recipe-form h2 {
+        font-size: 22px;
+    }
+
+    .planner-recipe-form .board-form-buttons {
+        flex-wrap: wrap;
+    }
+}
+
+
 .planned-recipes {
     margin-top: 15px;
+}
+
+
+/* Weekly Planner - Recipe Options */
+
+.planned-recipes .task-card {
+    position: relative;
+    min-width: 0;
+    padding: 14px 36px 14px 12px;
+    box-sizing: border-box;
+    overflow: visible;
+}
+
+.planned-recipe-name {
+    display: block;
+    overflow-wrap: anywhere;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+
+.planner-recipe-menu {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 20;
+    flex-shrink: 0;
+}
+
+
+.planner-menu-button {
+    padding: 2px 8px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #e95525;
+    font-size: 22px;
+    cursor: pointer;
+}
+
+.planner-menu-button:hover {
+    background-color: #ffe5d9;
+}
+
+
+
+.planner-menu-options {
+    position: absolute;
+    top: 100%;
+    right: -8px;
+    z-index: 20;
+
+    width: 115px;
+    box-sizing: border-box;
+
+    padding: 5px;
+    border: 1px solid #f3b29d;
+    border-radius: 8px;
+    background-color: #fffaf7;
+    box-shadow: 0 4px 12px rgba(80, 45, 30, 0.12);
+}
+
+
+
+.planner-menu-options[hidden] {
+    display: none;
+}
+
+
+.planner-menu-options button {
+    display: block;
+    width: 100%;
+    padding: 8px 5px;
+    border: none;
+    border-radius: 5px;
+    background: transparent;
+    color: #4b403c;
+    font-size: 12px;
+    text-align: left;
+    cursor: pointer;
+    white-space: normal;
+    overflow-wrap: break-word;
+}
+
+
+.planner-menu-options button:hover:not(:disabled) {
+    background-color: #ffe5d9;
+}
+
+.planner-menu-options button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.planner-menu-options .planner-delete-option {
+    color: #c0392b;
+}
+
+
+/* Weekly Planner - Edit Recipe Form */
+
+.planner-recipe-form input[type="date"] {
+    width: 100%;
+    padding: 12px 14px;
+    box-sizing: border-box;
+    border: 1px solid #f3b29d;
+    border-radius: 8px;
+    background-color: white;
+    color: #333;
+    font-size: 15px;
+}
+
+.planner-recipe-form input[type="date"]:focus {
+    outline: 2px solid #f3b29d;
+    outline-offset: 2px;
+}
+
+#cancel-planner-edit {
+    background-color: #f2e9e4;
+    color: #5d514c;
+    border: 1px solid #d8cbc5;
+}
+
+#cancel-planner-edit:hover {
+    background-color: #e7dad3;
+}
+
+
+/* Weekly Planner - Completion Checkboxes */
+
+.planned-recipes .task-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 36px 14px 12px;
+}
+
+.planned-recipes .task-card .planner-completion-checkbox {
+    display: block;
+    flex: 0 0 18px;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    accent-color: #e95525;
+    cursor: pointer;
+}
+
+
+.planned-recipes .task-card .planned-recipe-name {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.4;
+
+    overflow-wrap: normal;
+    word-break: normal;
+    hyphens: none;
+}
+
+
+.planned-recipes .task-card.completed {
+    background-color: #f5e8dd;
+}
+
+.planned-recipes .task-card.completed .planned-recipe-name {
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+    color: #8c817b;
+}
+
+
+/* =========================================
+   User Profile Dropdown
+   ========================================= */
+
+/* Position profile avatar on the right */
+.profile-menu {
+    position: relative;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* Profile avatar button */
+.profile-menu-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+}
+
+/* Default gray avatar with white initial */
+.profile-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #888888;
+    color: white;
+    font-size: 19px;
+    font-weight: 600;
+    flex-shrink: 0;
+    overflow: hidden;
+}
+
+/* Dropdown container */
+.profile-dropdown {
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    z-index: 1000;
+    width: 240px;
+    padding: 14px;
+    box-sizing: border-box;
+    background-color: #fffaf7;
+    border: 1px solid #f3b29d;
+    border-radius: 12px;
+    box-shadow: 0 5px 18px rgba(80, 45, 30, 0.15);
+}
+
+/* Hide dropdown until clicked */
+.profile-dropdown[hidden] {
+    display: none;
+}
+
+/* Profile information at top */
+.profile-info {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.profile-info-text {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.profile-info-text strong {
+    font-size: 15px;
+    color: #333333;
+    overflow-wrap: break-word;
+}
+
+.profile-info-text span {
+    font-size: 12px;
+    color: #888888;
+}
+
+/* Divider lines */
+.profile-dropdown hr {
+    border: none;
+    border-top: 1px solid #f1d8cb;
+    margin: 10px 0;
+}
+
+/* Dropdown options */
+.profile-dropdown button {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #4b403c;
+    font-family: inherit;
+    font-size: 13px;
+    text-align: left;
+    cursor: pointer;
+}
+
+.profile-dropdown button:hover {
+    background-color: #ffe5d9;
+}
+
+/* Logout option */
+#logout-button {
+    color: #c0392b;
+    font-weight: 600;
+}
+
+/* Profile picture displayed inside avatar */
+.profile-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+
+/* Center navigation tabs while keeping profile on the right */
+
+.dashboard-nav {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dashboard-nav .profile-menu {
+    position: absolute;
+    right: 30px;
+    top: 50%;
+    transform: translateY(-50%);
+    margin-left: 0;
+}
+
+
+/* Keep profile dropdown above board cards */
+
+.dashboard-nav {
+    position: relative;
+    z-index: 1000;
+}
+
+.dashboard-nav .profile-menu {
+    z-index: 1001;
+}
+
+.profile-dropdown {
+    z-index: 1002;
+}
+
+/* =========================================
+   Collaborators Section
+   ========================================= */
+
+.team-section h2 {
+    text-align: center;
+}
+
+
+/* Collaborators - Centered with horizontal scrolling */
+
+.team-members {
+    display: flex;
+    align-items: flex-start;
+    gap: 45px;
+
+    overflow-x: auto;
+    overflow-y: hidden;
+
+    max-width: 100%;
+    padding: 15px 10px 20px;
+    box-sizing: border-box;
+
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Center collaborators when there is extra space */
+.team-members .member:first-child {
+    margin-left: auto;
+}
+
+/* Center the last collaborator when there is extra space */
+.team-members .member:last-child {
+    margin-right: auto;
+}
+
+/* Keep each collaborator from shrinking */
+.team-members .member {
+    flex: 0 0 auto;
+}
+
+
+.team-members .member {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+}
+
+.team-members .member-avatar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    background-color: #888888;
+    color: #ffffff;
+    font-size: 36px;
+    font-weight: 600;
+    overflow: hidden;
+}
+
+.team-members .member p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    color: #333333;
+}
+
+
+/* =========================================
+   Login Page Styling
+   ========================================= */
+
+.auth-page {
+    min-height: 100vh;
+    margin: 0;
+    padding: 30px 20px;
+    box-sizing: border-box;
+    background-color: #f8ded3;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 420px;
+    padding: 35px;
+    box-sizing: border-box;
+    background-color: #fffaf7;
+    border: 1px solid #f3b29d;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(80, 45, 30, 0.10);
+    text-align: center;
+}
+
+.auth-container h1 {
+    margin: 0 0 28px;
+    color: #e95525;
+    font-size: 32px;
+}
+
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+}
+
+.auth-form label {
+    color: #4b403c;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.auth-form input {
+    width: 100%;
+    padding: 12px 14px;
+    box-sizing: border-box;
+    border: 1px solid #f3b29d;
+    border-radius: 8px;
+    background-color: white;
+    color: #333333;
+    font-family: inherit;
+    font-size: 15px;
+}
+
+.auth-form input:focus {
+    outline: 2px solid #f3b29d;
+    outline-offset: 2px;
+}
+
+.auth-form .button {
+    width: 100%;
+    margin-top: 12px;
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    background-color: #f6a33d;
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.auth-form .button:hover {
+    background-color: #e95525;
+}
+
+.auth-container p {
+    margin: 24px 0 16px;
+    color: #4b403c;
+    font-size: 14px;
+}
+
+.auth-container a {
+    color: #e95525;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.auth-container a:hover {
+    text-decoration: underline;
 }

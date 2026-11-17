@@ -9,11 +9,69 @@
 </head>
 <body class="dashboard-page">
 
-    <nav class="dashboard-nav">
-        <a href="dashboard.html" class="active">Weekly Tasks</a>
-        <a href="boards.html">Boards</a>
-        <a href="search.html">Search</a>
-    </nav>
+    
+<nav class="dashboard-nav">
+    <a href="dashboard.html" class="active">Weekly Tasks</a>
+    <a href="boards.html">Boards</a>
+    <a href="search.html">Search</a>
+
+    <!-- User Profile Menu -->
+    <div class="profile-menu">
+
+        <button
+            type="button"
+            id="profile-menu-button"
+            class="profile-menu-button"
+            aria-label="Open profile menu"
+            aria-expanded="false"
+        >
+            <span id="profile-avatar" class="profile-avatar">U</span>
+        </button>
+
+        <div id="profile-dropdown" class="profile-dropdown" hidden>
+
+            <div class="profile-info">
+                <span id="profile-dropdown-avatar" class="profile-avatar">U</span>
+
+                <div class="profile-info-text">
+                    <strong id="profile-display-name">User</strong>
+                    <span>My Account</span>
+                </div>
+            </div>
+
+            <hr>
+
+            <button type="button" id="edit-display-name">
+                Edit Display Name
+            </button>
+
+            
+        <button type="button" id="change-profile-picture">
+            Change Profile Picture
+        </button>
+
+        <input
+        type="file"
+        id="profile-picture-input"
+        accept="image/*"
+        hidden
+        >
+
+<button type="button" id="remove-profile-picture" hidden>
+    Remove Profile Picture
+</button>
+
+
+            <hr>
+
+            <button type="button" id="logout-button">
+                Log Out
+            </button>
+
+        </div>
+
+</nav>
+
 
     <main class="dashboard-container">
         <h1>Weekly Tasks</h1>
@@ -128,28 +186,62 @@
 </section>
 
 
-        <section class="team-section">
-            <h2>Team Members</h2>
+<section class="planner-recipe-form" id="edit-planner-form" hidden>
+    <h2>Reschedule Recipe</h2>
 
-            <div class="team-members">
-                <div class="member">
-                    <div class="member-avatar">A</div>
-                    <p>User 1</p>
-                </div>
+    <form id="edit-planner-recipe-form">
 
-                <div class="member">
-                    <div class="member-avatar">B</div>
-                    <p>User 2</p>
-                </div>
+        <label for="edit-planner-date">
+            Scheduled Date
+        </label>
 
-                <div class="member">
-                    <div class="member-avatar">C</div>
-                    <p>User 3</p>
-                </div>
-            </div>
-        </section>
+        <input
+            type="date"
+            id="edit-planner-date"
+            required
+        >
+
+        <div class="board-form-buttons">
+            <button type="submit" class="create-board-button">
+                Save Changes
+            </button>
+
+            <button type="button" id="cancel-planner-edit">
+                Cancel
+            </button>
+        </div>
+
+    </form>
+</section>
+
+        
+<!-- Collaborators Section -->
+<section class="team-section">
+    <h2>Collaborators</h2>
+
+    <div class="team-members">
+
+        <div class="member">
+            <div class="member-avatar">A</div>
+            <p>Alex</p>
+        </div>
+
+        <div class="member">
+            <div class="member-avatar">B</div>
+            <p>Blake</p>
+        </div>
+
+        <div class="member">
+            <div class="member-avatar">C</div>
+            <p>Casey</p>
+        </div>
+
+    </div>
+</section>
+
     </main>
 
     <script type="module" src="js/dashboard.js"></script>
+    <script type="module" src="js/profileMenu.js"></script>
 </body>
 </html>

@@ -13,6 +13,60 @@
         <a href="dashboard.html">Weekly Tasks</a>
         <a href="boards.html" class="active">Boards</a>
         <a href="search.html">Search</a>
+
+        <div class="profile-menu">
+
+        <button
+            type="button"
+            id="profile-menu-button"
+            class="profile-menu-button"
+            aria-label="Open profile menu"
+            aria-expanded="false"
+        >
+            <span id="profile-avatar" class="profile-avatar">U</span>
+        </button>
+
+        <div id="profile-dropdown" class="profile-dropdown" hidden>
+
+            <div class="profile-info">
+                <span id="profile-dropdown-avatar" class="profile-avatar">U</span>
+
+                <div class="profile-info-text">
+                    <strong id="profile-display-name">User</strong>
+                    <span>My Account</span>
+                </div>
+            </div>
+
+            <hr>
+
+            <button type="button" id="edit-display-name">
+                Edit Display Name
+            </button>
+
+            
+        <button type="button" id="change-profile-picture">
+            Change Profile Picture
+        </button>
+
+        <input
+        type="file"
+        id="profile-picture-input"
+        accept="image/*"
+        hidden
+        >
+
+<button type="button" id="remove-profile-picture" hidden>
+    Remove Profile Picture
+</button>
+
+
+            <hr>
+
+            <button type="button" id="logout-button">
+                Log Out
+            </button>
+
+        </div>
     </nav>
 
     <main class="boards-container">
@@ -367,5 +421,6 @@
 
     </main>
      <script type="module" src="js/boards.js"></script>
+     <script type="module" src="js/profileMenu.js"></script>
 </body>
 </html>
