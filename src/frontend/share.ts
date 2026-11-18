@@ -5,7 +5,10 @@
 // Shows a recipe or board someone shared with a link.
 // No login needed, and nothing here can be edited.
 
+import { renderReviews } from "./reviews.js";
+
 interface SharedRecipe {
+    id?: number;
     name: string;
     category: string;
     time: number;
@@ -36,7 +39,7 @@ function element<K extends keyof HTMLElementTagNameMap>(
     return el;
 }
 
-function renderRecipe(recipe: SharedRecipe): HTMLElement {
+function renderRecipe(recipe: SharedRecipe, owner: string): HTMLElement {
     const card = element("article", undefined, "recipe-card shared-recipe");
     const info = element("div", undefined, "recipe-info");
 
@@ -55,6 +58,11 @@ function renderRecipe(recipe: SharedRecipe): HTMLElement {
     recipe.instructions.forEach((step) => instructionsList.appendChild(element("li", step)));
 
     info.append(element("h4", "Ingredients"), ingredientsList, element("h4", "Instructions"), instructionsList);
+    // Star ratings and comments (log in to leave your own)
+    const reviews = element("section", undefined, "recipe-reviews");
+    info.appendChild(reviews);
+    renderReviews(reviews, { id: recipe.id, name: recipe.name, owner });
+
     card.appendChild(info);
     return card;
 }
@@ -84,7 +92,7 @@ async function loadSharedItem(): Promise<void> {
         shareContent.replaceChildren(
             element("h1", data.recipe.name),
             element("p", `Shared by ${data.owner}`, "shared-by"),
-            renderRecipe(data.recipe)
+            renderRecipe(data.recipe, data.owner)
         );
         return;
     }
@@ -107,7 +115,7 @@ async function loadSharedItem(): Promise<void> {
     }
 
     const grid = element("section", undefined, "recipe-grid");
-    data.board.recipes.forEach((recipe) => grid.appendChild(renderRecipe(recipe)));
+    data.board.recipes.forEach((recipe) => grid.appendChild(renderRecipe(recipe, data.owner)));
     parts.push(grid);
 
     shareContent.replaceChildren(...parts);
@@ -115,4 +123,3 @@ async function loadSharedItem(): Promise<void> {
 
 loadSharedItem();
 
-export {};

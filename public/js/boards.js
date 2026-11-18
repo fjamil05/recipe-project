@@ -1,5 +1,7 @@
 import { recipes } from "./recipeDetails.js";
 import { store, createShareButton } from "./store.js";
+import { notify } from "./ui.js";
+import { createCollaboratorsButton } from "./collab.js";
 function displaySavedRecipes() {
     const savedRecipesList = document.querySelector("#saved-recipes-list");
     const emptyMessage = document.querySelector("#no-saved-recipes");
@@ -119,7 +121,7 @@ function displaySavedRecipes() {
             closeOpenSections();
             // Refresh the Unsorted Recipes section
             displaySavedRecipes();
-            alert(`"${recipe.name}" was deleted successfully.`);
+            notify(`"${recipe.name}" was deleted successfully.`);
         });
         menuButton.addEventListener("click", () => {
             menuOptions.hidden = !menuOptions.hidden;
@@ -173,7 +175,7 @@ function displaySavedRecipes() {
         addToBoardButton.addEventListener("click", () => {
             const boards = savedBoards;
             if (boards.length === 0) {
-                alert("You need to create a board first.");
+                notify("You need to create a board first.");
                 return;
             }
             boardSelect.replaceChildren();
@@ -195,11 +197,11 @@ function displaySavedRecipes() {
             const boards = JSON.parse(store.getItem("recipeBoards") ?? "[]");
             const selectedBoard = boards.find((board) => board.id === selectedBoardId);
             if (!selectedBoard) {
-                alert("Please select a valid board.");
+                notify("Please select a valid board.");
                 return;
             }
             if (selectedBoard.recipes.includes(recipe.name)) {
-                alert("This recipe is already in the selected board.");
+                notify("This recipe is already in the selected board.");
                 return;
             }
             // Add the recipe to the selected board
@@ -220,7 +222,7 @@ function displaySavedRecipes() {
             boardPanel.hidden = true;
             addToBoardButton.hidden = false;
             displaySavedRecipes();
-            alert(`"${recipe.name}" was added to "${selectedBoard.name}"!`);
+            notify(`"${recipe.name}" was added to "${selectedBoard.name}"!`);
         });
         recipeInfo.appendChild(name);
         recipeInfo.appendChild(category);
@@ -370,7 +372,7 @@ function openBoard(board) {
                 const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
                 const recipe = savedRecipes.find((savedRecipe) => savedRecipe.name === recipeName);
                 if (!recipe) {
-                    alert("This recipe cannot be edited because its saved details were not found.");
+                    notify("This recipe cannot be edited because its saved details were not found.");
                     return;
                 }
                 const editForm = document.querySelector("#edit-recipe-form");
@@ -427,7 +429,7 @@ function openBoard(board) {
                 const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
                 const updatedRecipes = savedRecipes.filter((recipe) => recipe.name !== recipeName);
                 if (updatedRecipes.length === savedRecipes.length) {
-                    alert("This recipe was not found in your saved recipes.");
+                    notify("This recipe was not found in your saved recipes.");
                     return;
                 }
                 store.setItem("savedRecipes", JSON.stringify(updatedRecipes));
@@ -451,7 +453,7 @@ function openBoard(board) {
                 closeOpenSections();
                 // Refresh the current board
                 openBoard(board);
-                alert(`"${recipeName}" was deleted successfully.`);
+                notify(`"${recipeName}" was deleted successfully.`);
             });
             menuButton.addEventListener("click", () => {
                 menuOptions.hidden = !menuOptions.hidden;
@@ -468,7 +470,7 @@ function openBoard(board) {
                 const matchedRecipe = savedRecipes.find((recipe) => recipe.name === recipeName) ??
                     recipes.find((recipe) => recipe.name === recipeName);
                 if (!matchedRecipe) {
-                    alert("Recipe details could not be found.");
+                    notify("Recipe details could not be found.");
                     return;
                 }
                 displayBoardRecipe(matchedRecipe);
@@ -606,7 +608,7 @@ function displayBoard(board) {
         }
         // Remove it from the saved boards
         savedBoards.splice(boardIndex, 1);
-        // Update localStorage
+        // Save the change
         store.setItem("recipeBoards", JSON.stringify(savedBoards));
         // Remove its card from the page
         card.remove();
@@ -619,6 +621,7 @@ function displayBoard(board) {
     });
     menuOptions.appendChild(editButton);
     menuOptions.appendChild(createShareButton("board", String(board.id)));
+    menuOptions.appendChild(createCollaboratorsButton(board.id, board.name));
     menuOptions.appendChild(deleteButton);
     boardMenu.appendChild(menuButton);
     boardMenu.appendChild(menuOptions);
@@ -655,7 +658,7 @@ newBoardForm?.addEventListener("submit", async (event) => {
         }
         catch (error) {
             console.error("Photo upload failed:", error);
-            alert("Could not process the selected photo.");
+            notify("Could not process the selected photo.");
             return;
         }
     }
@@ -690,12 +693,12 @@ boardEditForm?.addEventListener("submit", async (event) => {
     const boardId = Number(editBoardForm.dataset.boardId);
     const board = savedBoards.find((savedBoard) => savedBoard.id === boardId);
     if (!board) {
-        alert("Board not found.");
+        notify("Board not found.");
         return;
     }
     const updatedName = editBoardName.value.trim();
     if (!updatedName) {
-        alert("Please enter a board name.");
+        notify("Please enter a board name.");
         return;
     }
     // Update the board's information
@@ -714,7 +717,7 @@ boardEditForm?.addEventListener("submit", async (event) => {
         }
         catch (error) {
             console.error("Could not process photo:", error);
-            alert("Could not process the selected photo.");
+            notify("Could not process the selected photo.");
             return;
         }
     }
@@ -722,7 +725,7 @@ boardEditForm?.addEventListener("submit", async (event) => {
     board.name = updatedName;
     board.visibility = editBoardVisibility.value;
     board.coverPhoto = updatedCoverPhoto;
-    // Save changes to localStorage
+    // Save the changes
     store.setItem("recipeBoards", JSON.stringify(savedBoards));
     // Update the displayed board cards
     document.querySelectorAll(".boards-grid .board-card").forEach((card) => {
@@ -827,13 +830,13 @@ newRecipeForm?.addEventListener("submit", (event) => {
     if (!name || !categoryInput.value || !difficultyInput.value ||
         !ratingInput.value || !Number.isFinite(time) || time < 1 ||
         ingredients.length === 0 || instructions.length === 0) {
-        alert("Please complete all recipe fields.");
+        notify("Please complete all recipe fields.");
         return;
     }
     const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
     const duplicateRecipe = savedRecipes.some((recipe) => recipe.name.toLowerCase() === name.toLowerCase());
     if (duplicateRecipe) {
-        alert("A saved recipe with this name already exists.");
+        notify("A saved recipe with this name already exists.");
         return;
     }
     const newRecipe = {
@@ -877,7 +880,7 @@ recipeEditForm?.addEventListener("submit", (event) => {
     }
     const originalName = editRecipeForm.dataset.recipeName;
     if (!originalName) {
-        alert("No recipe was selected for editing.");
+        notify("No recipe was selected for editing.");
         return;
     }
     const nameInput = document.querySelector("#edit-recipe-name");
@@ -907,20 +910,20 @@ recipeEditForm?.addEventListener("submit", (event) => {
         !Number.isFinite(updatedTime) || updatedTime < 1 ||
         updatedIngredients.length === 0 ||
         updatedInstructions.length === 0) {
-        alert("Please complete all recipe fields.");
+        notify("Please complete all recipe fields.");
         return;
     }
     const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
     const recipeIndex = savedRecipes.findIndex((recipe) => recipe.name === originalName);
     if (recipeIndex === -1) {
-        alert("The recipe could not be found.");
+        notify("The recipe could not be found.");
         return;
     }
     // Prevent two recipes from having the same name
     const duplicateName = savedRecipes.some((recipe, index) => index !== recipeIndex &&
         recipe.name.toLowerCase() === updatedName.toLowerCase());
     if (duplicateName) {
-        alert("Another saved recipe already has this name.");
+        notify("Another saved recipe already has this name.");
         return;
     }
     // Update the recipe's information
@@ -957,5 +960,5 @@ recipeEditForm?.addEventListener("submit", (event) => {
     editRecipeForm.hidden = true;
     delete editRecipeForm.dataset.recipeName;
     recipeEditForm.reset();
-    alert(`"${updatedName}" was updated successfully!`);
+    notify(`"${updatedName}" was updated successfully!`);
 });

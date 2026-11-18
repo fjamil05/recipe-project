@@ -1,4 +1,6 @@
 import { store, communityRecipes } from "./store.js";
+import { notify } from "./ui.js";
+import { renderReviews } from "./reviews.js";
 let selectedRecipe = null;
 export const recipes = [];
 function displayRecipe(recipe) {
@@ -31,6 +33,15 @@ function displayRecipe(recipe) {
         item.textContent = instruction;
         instructions.appendChild(item);
     });
+    // Reviews: what others said about your recipe, or leave one on theirs
+    let reviewsBox = document.querySelector("#recipe-reviews");
+    if (!reviewsBox) {
+        reviewsBox = document.createElement("section");
+        reviewsBox.id = "recipe-reviews";
+        reviewsBox.className = "recipe-reviews";
+        instructions.after(reviewsBox);
+    }
+    renderReviews(reviewsBox, recipe);
     document.querySelector("#recipe-details")?.scrollIntoView({
         behavior: "smooth"
     });
@@ -56,7 +67,7 @@ document.addEventListener("click", (event) => {
         ? communityRecipes.find((recipe) => recipe.name === recipeName && recipe.owner === owner)
         : savedRecipes.find((recipe) => recipe.name === recipeName);
     if (!matchedRecipe) {
-        alert("Recipe details could not be found.");
+        notify("Recipe details could not be found.");
         return;
     }
     displayRecipe(matchedRecipe);
@@ -79,7 +90,7 @@ destinationOptions.forEach((option) => {
 // Open the Save Recipe panel
 saveToBoardButton?.addEventListener("click", () => {
     if (!selectedRecipe || !saveToBoardPanel || !saveBoardSelect) {
-        alert("Please select a recipe first.");
+        notify("Please select a recipe first.");
         return;
     }
     const boards = JSON.parse(store.getItem("recipeBoards") ?? "[]");
@@ -166,12 +177,12 @@ confirmSaveBoardButton?.addEventListener("click", () => {
     }
     if (destination === "board") {
         if (!saveBoardSelect.value) {
-            alert("Please select a board.");
+            notify("Please select a board.");
             return;
         }
         const selectedBoard = boards.find((board) => board.id === Number(saveBoardSelect.value));
         if (!selectedBoard) {
-            alert("The selected board could not be found.");
+            notify("The selected board could not be found.");
             return;
         }
         if (selectedBoard.recipes.includes(recipeName)) {

@@ -52,3 +52,43 @@ CREATE TABLE IF NOT EXISTS BoardRecipes (
     FOREIGN KEY (board_id) REFERENCES Boards(board_id) ON DELETE CASCADE,
     FOREIGN KEY (recipe_id) REFERENCES Recipes(recipe_id) ON DELETE CASCADE
 );
+
+-- Login sessions, so people stay logged in when the server restarts
+CREATE TABLE IF NOT EXISTS Sessions (
+    session_id VARCHAR(128) PRIMARY KEY,
+    data TEXT NOT NULL,
+    expires BIGINT NOT NULL
+);
+
+-- Small per-user settings and lists: meal planner, display name,
+-- profile picture, grocery list checkmarks
+CREATE TABLE IF NOT EXISTS UserData (
+    user_id INT NOT NULL,
+    data_key VARCHAR(50) NOT NULL,
+    value LONGTEXT NOT NULL,
+    PRIMARY KEY (user_id, data_key),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+-- Star ratings and comments other users leave on shared recipes
+CREATE TABLE IF NOT EXISTS Reviews (
+    review_id INT AUTO_INCREMENT PRIMARY KEY,
+    recipe_id INT NOT NULL,
+    user_id INT NOT NULL,
+    stars TINYINT NOT NULL,
+    comment TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY one_review_per_user (recipe_id, user_id),
+    FOREIGN KEY (recipe_id) REFERENCES Recipes(recipe_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);
+
+-- People a board owner has invited to add recipes to one of their boards
+CREATE TABLE IF NOT EXISTS BoardMembers (
+    board_id INT NOT NULL,
+    user_id INT NOT NULL,
+    added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (board_id, user_id),
+    FOREIGN KEY (board_id) REFERENCES Boards(board_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+);

@@ -11,13 +11,16 @@ if (!dbPassword) {
     throw new Error("DB_PASSWORD is missing from the .env file");
 }
 
+// Locally this connects to the Docker database. When the site is hosted,
+// set DB_HOST, DB_PORT, DB_USER, DB_NAME and DB_SSL=true in the host's settings.
 const pool = mariadb.createPool({
-    host: "127.0.0.1",
-    port: 3306,
-    user: "recipe_user",
+    host: process.env.DB_HOST ?? "127.0.0.1",
+    port: Number(process.env.DB_PORT ?? 3306),
+    user: process.env.DB_USER ?? "recipe_user",
     password: dbPassword,
-    database: "recipe_tracker",
-    connectionLimit: 5
+    database: process.env.DB_NAME ?? "recipe_tracker",
+    connectionLimit: 5,
+    ...(process.env.DB_SSL === "true" ? { ssl: { rejectUnauthorized: true } } : {})
 });
 
 export async function testConnection(): Promise<void> {

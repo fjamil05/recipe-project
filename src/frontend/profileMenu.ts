@@ -1,3 +1,6 @@
+import { store, currentUsername } from "./store.js";
+import { notify } from "./ui.js";
+import "./account.js";
 
 const profileMenuButton =
     document.querySelector<HTMLButtonElement>("#profile-menu-button");
@@ -58,8 +61,8 @@ const profileAvatar =
 const profileDropdownAvatar =
     document.querySelector<HTMLElement>("#profile-dropdown-avatar");
 
-// Load the saved display name or use "User" by default
-let displayName = localStorage.getItem("profileDisplayName") ?? "User";
+// Load the saved display name, or use the username by default
+let displayName = store.getItem("profileDisplayName") || currentUsername || "User";
 
 // Update the name and avatar initials
 
@@ -71,7 +74,7 @@ function updateProfileDisplay(): void {
 
     const firstLetter = displayName.trim().charAt(0).toUpperCase() || "U";
 
-    const savedPicture = localStorage.getItem("profilePicture");
+    const savedPicture = store.getItem("profilePicture");
 
     // Update both avatars
     [profileAvatar, profileDropdownAvatar].forEach((avatar) => {
@@ -118,14 +121,14 @@ editDisplayNameButton?.addEventListener("click", () => {
 
     // Prevent empty display names
     if (trimmedName.length === 0) {
-        alert("Display name cannot be empty.");
+        notify("Display name cannot be empty.");
         return;
     }
 
     // Save the new display name
     displayName = trimmedName;
 
-    localStorage.setItem("profileDisplayName", displayName);
+    store.setItem("profileDisplayName", displayName);
 
     updateProfileDisplay();
 });
@@ -162,7 +165,7 @@ profilePictureInput?.addEventListener("change", () => {
     }
 
     if (!file.type.startsWith("image/")) {
-        alert("Please select an image file.");
+        notify("Please select an image file.");
         return;
     }
 
@@ -210,17 +213,17 @@ profilePictureInput?.addEventListener("change", () => {
             const resizedPicture = canvas.toDataURL("image/jpeg", 0.8);
 
             try {
-                localStorage.setItem("profilePicture", resizedPicture);
+                store.setItem("profilePicture", resizedPicture);
 
                 updateProfileDisplay();
 
             } catch {
-                alert("Unable to save the profile picture.");
+                notify("Unable to save the profile picture.");
             }
         };
 
         image.onerror = () => {
-            alert("Unable to read the selected image.");
+            notify("Unable to read the selected image.");
         };
 
         if (typeof reader.result === "string") {
@@ -229,7 +232,7 @@ profilePictureInput?.addEventListener("change", () => {
     };
 
     reader.onerror = () => {
-        alert("Unable to read the selected file.");
+        notify("Unable to read the selected file.");
     };
 
     reader.readAsDataURL(file);
@@ -241,7 +244,7 @@ profilePictureInput?.addEventListener("change", () => {
 // Remove the saved profile picture
 removeProfilePictureButton?.addEventListener("click", () => {
 
-    localStorage.removeItem("profilePicture");
+    store.removeItem("profilePicture");
 
     updateProfileDisplay();
 });
