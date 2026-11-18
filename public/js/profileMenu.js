@@ -152,7 +152,9 @@ removeProfilePictureButton?.addEventListener("click", () => {
 // =========================================
 const logoutButton = document.querySelector("#logout-button");
 // Return to the Recipe Tracker welcome page
-logoutButton?.addEventListener("click", () => {
+logoutButton?.addEventListener("click", async () => {
+    // End the session on the server, then go back to the welcome page
+    await fetch("/api/logout", { method: "POST" }).catch(() => undefined);
     window.location.href = "index.html";
 });
 export {};

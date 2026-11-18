@@ -1,6 +1,7 @@
 
 import mariadb from "mariadb";
 import dotenv from "dotenv";
+import { readFile } from "node:fs/promises";
 
 dotenv.config();
 
@@ -41,6 +42,24 @@ export async function testConnection(): Promise<void> {
         if (connection) {
             connection.release();
         }
+    }
+}
+
+// Creates any missing tables from sql/schema.sql when the server starts,
+// so nobody has to run the schema by hand after pulling new tables.
+export async function ensureSchema(): Promise<void> {
+    const sql = await readFile(new URL("../sql/schema.sql", import.meta.url), "utf8");
+
+    const statements = sql
+        .split("\n")
+        .filter((line) => !line.trim().startsWith("--"))
+        .join("\n")
+        .split(";")
+        .map((statement) => statement.trim())
+        .filter((statement) => statement.length > 0);
+
+    for (const statement of statements) {
+        await pool.query(statement);
     }
 }
 

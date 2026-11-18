@@ -1,3 +1,4 @@
+import { store, communityRecipes } from "./store.js";
 let selectedRecipe = null;
 export const recipes = [];
 function displayRecipe(recipe) {
@@ -48,8 +49,12 @@ document.addEventListener("click", (event) => {
     if (!recipeName) {
         return;
     }
-    const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
-    const matchedRecipe = savedRecipes.find((recipe) => recipe.name === recipeName);
+    const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
+    // Recipes shared by other users are marked with data-owner
+    const owner = recipeCard?.getAttribute("data-owner");
+    const matchedRecipe = owner
+        ? communityRecipes.find((recipe) => recipe.name === recipeName && recipe.owner === owner)
+        : savedRecipes.find((recipe) => recipe.name === recipeName);
     if (!matchedRecipe) {
         alert("Recipe details could not be found.");
         return;
@@ -77,7 +82,7 @@ saveToBoardButton?.addEventListener("click", () => {
         alert("Please select a recipe first.");
         return;
     }
-    const boards = JSON.parse(localStorage.getItem("recipeBoards") ?? "[]");
+    const boards = JSON.parse(store.getItem("recipeBoards") ?? "[]");
     saveBoardSelect.replaceChildren();
     const defaultOption = document.createElement("option");
     defaultOption.value = "";
@@ -107,19 +112,52 @@ cancelSaveBoardButton?.addEventListener("click", () => {
         saveToBoardPanel.hidden = true;
     }
 });
+// If the selected recipe was shared by another user, save a copy of it
+// into this account first. Returns the name the recipe is saved under.
+function saveSelectedRecipeToAccount(recipe) {
+    if (!("owner" in recipe)) {
+        return recipe.name;
+    }
+    const owner = String(recipe.owner);
+    const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
+    const findSaved = (name) => savedRecipes.find((saved) => saved.name.toLowerCase() === name.toLowerCase());
+    const sameContent = (saved) => JSON.stringify([saved.ingredients, saved.instructions]) ===
+        JSON.stringify([recipe.ingredients, recipe.instructions]);
+    // Already saved earlier
+    const existing = findSaved(recipe.name);
+    if (existing && sameContent(existing)) {
+        return existing.name;
+    }
+    // You already have a different recipe with this name
+    const name = existing ? `${recipe.name} (from ${owner})` : recipe.name;
+    if (findSaved(name)) {
+        return name;
+    }
+    savedRecipes.push({
+        name,
+        category: recipe.category,
+        time: recipe.time,
+        difficulty: recipe.difficulty,
+        rating: recipe.rating,
+        ingredients: [...recipe.ingredients],
+        instructions: [...recipe.instructions]
+    });
+    store.setItem("savedRecipes", JSON.stringify(savedRecipes));
+    return name;
+}
 // Save the selected recipe
 confirmSaveBoardButton?.addEventListener("click", () => {
     if (!selectedRecipe || !saveBoardSelect) {
         return;
     }
-    const recipeName = selectedRecipe.name;
+    const recipeName = saveSelectedRecipeToAccount(selectedRecipe);
     const destination = document.querySelector('input[name="save-destination"]:checked')?.value;
-    const boards = JSON.parse(localStorage.getItem("recipeBoards") ?? "[]");
+    const boards = JSON.parse(store.getItem("recipeBoards") ?? "[]");
     if (destination === "unsorted") {
         boards.forEach((board) => {
             board.recipes = board.recipes.filter((name) => name !== recipeName);
         });
-        localStorage.setItem("recipeBoards", JSON.stringify(boards));
+        store.setItem("recipeBoards", JSON.stringify(boards));
         if (saveBoardMessage) {
             saveBoardMessage.textContent =
                 `${recipeName} was moved to Unsorted Recipes!`;
@@ -144,7 +182,7 @@ confirmSaveBoardButton?.addEventListener("click", () => {
             return;
         }
         selectedBoard.recipes.push(recipeName);
-        localStorage.setItem("recipeBoards", JSON.stringify(boards));
+        store.setItem("recipeBoards", JSON.stringify(boards));
         if (saveBoardMessage) {
             saveBoardMessage.textContent =
                 `${recipeName} was added to ${selectedBoard.name}!`;

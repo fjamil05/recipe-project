@@ -1,0 +1,13 @@
+{
+  // Compiles the browser code in src/frontend into public/js
+  // Run with: npm run build
+  "compilerOptions": {
+    "rootDir": "./src/frontend",
+    "outDir": "./public/js",
+    "target": "esnext",
+    "module": "esnext",
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["src/frontend/**/*.ts"]
+}

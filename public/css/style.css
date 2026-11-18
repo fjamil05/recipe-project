@@ -2022,3 +2022,40 @@ header {
 .auth-container a:hover {
     text-decoration: underline;
 }
+
+
+/* =========================================
+   Sharing
+   ========================================= */
+
+.shared-by {
+    color: #f39a35;
+    font-weight: bold;
+}
+
+.share-page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.share-page h1 {
+    margin-bottom: 4px;
+}
+
+.shared-board-cover {
+    width: 100%;
+    max-height: 280px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 20px;
+}
+
+.shared-recipe h4 {
+    margin: 16px 0 6px;
+}
+
+.share-footer {
+    text-align: center;
+    padding-bottom: 30px;
+}

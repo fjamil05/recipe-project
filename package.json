@@ -5,7 +5,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "tsx src/server.ts"
+    "build": "tsc -p tsconfig.frontend.json",
+    "dev": "npm run build && tsx src/server.ts"
   },
   "keywords": [],
   "author": "",

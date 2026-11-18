@@ -1,13 +1,14 @@
 import { recipes } from "./recipeDetails.js";
+import { store, createShareButton } from "./store.js";
 function displaySavedRecipes() {
     const savedRecipesList = document.querySelector("#saved-recipes-list");
     const emptyMessage = document.querySelector("#no-saved-recipes");
     if (!savedRecipesList || !emptyMessage) {
         return;
     }
-    const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+    const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
     savedRecipesList.replaceChildren();
-    const boards = JSON.parse(localStorage.getItem("recipeBoards") ?? "[]");
+    const boards = JSON.parse(store.getItem("recipeBoards") ?? "[]");
     const unsortedRecipes = savedRecipes.filter((recipe) => {
         return !boards.some((board) => board.recipes.includes(recipe.name));
     });
@@ -97,14 +98,14 @@ function displaySavedRecipes() {
                 return;
             }
             // Remove the recipe from saved recipes
-            const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+            const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
             const updatedRecipes = savedRecipes.filter((savedRecipe) => savedRecipe.name !== recipe.name);
-            localStorage.setItem("savedRecipes", JSON.stringify(updatedRecipes));
+            store.setItem("savedRecipes", JSON.stringify(updatedRecipes));
             // Remove the recipe from every board
             savedBoards.forEach((board) => {
                 board.recipes = board.recipes.filter((name) => name !== recipe.name);
             });
-            localStorage.setItem("recipeBoards", JSON.stringify(savedBoards));
+            store.setItem("recipeBoards", JSON.stringify(savedBoards));
             // Update recipe counts on the board cards
             savedBoards.forEach((board) => {
                 const boardCard = document.querySelector(`.board-card[data-board-id="${board.id}"]`);
@@ -125,6 +126,7 @@ function displaySavedRecipes() {
             menuButton.setAttribute("aria-expanded", String(!menuOptions.hidden));
         });
         menuOptions.appendChild(editRecipeButton);
+        menuOptions.appendChild(createShareButton("recipe", recipe.name));
         menuOptions.appendChild(deleteRecipeButton);
         recipeMenu.appendChild(menuButton);
         recipeMenu.appendChild(menuOptions);
@@ -190,7 +192,7 @@ function displaySavedRecipes() {
         });
         addToBoardConfirm.addEventListener("click", () => {
             const selectedBoardId = Number(boardSelect.value);
-            const boards = JSON.parse(localStorage.getItem("recipeBoards") ?? "[]");
+            const boards = JSON.parse(store.getItem("recipeBoards") ?? "[]");
             const selectedBoard = boards.find((board) => board.id === selectedBoardId);
             if (!selectedBoard) {
                 alert("Please select a valid board.");
@@ -208,7 +210,7 @@ function displaySavedRecipes() {
                 displayedBoard.recipes = [...selectedBoard.recipes];
             }
             // Save the updated boards
-            localStorage.setItem("recipeBoards", JSON.stringify(boards));
+            store.setItem("recipeBoards", JSON.stringify(boards));
             const boardCard = document.querySelector(`.board-card[data-board-id="${selectedBoard.id}"]`);
             const recipeCount = boardCard?.querySelector(".board-info p");
             if (recipeCount) {
@@ -365,7 +367,7 @@ function openBoard(board) {
             editRecipeButton.textContent = "Edit Recipe";
             // Edit a recipe from inside a board
             editRecipeButton.addEventListener("click", () => {
-                const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+                const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
                 const recipe = savedRecipes.find((savedRecipe) => savedRecipe.name === recipeName);
                 if (!recipe) {
                     alert("This recipe cannot be edited because its saved details were not found.");
@@ -422,18 +424,18 @@ function openBoard(board) {
                     return;
                 }
                 // Remove the recipe from savedRecipes
-                const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+                const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
                 const updatedRecipes = savedRecipes.filter((recipe) => recipe.name !== recipeName);
                 if (updatedRecipes.length === savedRecipes.length) {
                     alert("This recipe was not found in your saved recipes.");
                     return;
                 }
-                localStorage.setItem("savedRecipes", JSON.stringify(updatedRecipes));
+                store.setItem("savedRecipes", JSON.stringify(updatedRecipes));
                 // Remove the recipe from every board
                 savedBoards.forEach((savedBoard) => {
                     savedBoard.recipes = savedBoard.recipes.filter((name) => name !== recipeName);
                 });
-                localStorage.setItem("recipeBoards", JSON.stringify(savedBoards));
+                store.setItem("recipeBoards", JSON.stringify(savedBoards));
                 // Update recipe counts on all board cards
                 savedBoards.forEach((savedBoard) => {
                     const boardCard = document.querySelector(`.board-card[data-board-id="${savedBoard.id}"]`);
@@ -455,14 +457,14 @@ function openBoard(board) {
                 menuOptions.hidden = !menuOptions.hidden;
                 menuButton.setAttribute("aria-expanded", String(!menuOptions.hidden));
             });
-            menuOptions.append(editRecipeButton, deleteRecipeButton);
+            menuOptions.append(editRecipeButton, createShareButton("recipe", recipeName), deleteRecipeButton);
             recipeMenu.append(menuButton, menuOptions);
             const viewButton = document.createElement("button");
             viewButton.type = "button";
             viewButton.className = "view-recipe-button";
             viewButton.textContent = "View Recipe";
             viewButton.addEventListener("click", () => {
-                const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+                const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
                 const matchedRecipe = savedRecipes.find((recipe) => recipe.name === recipeName) ??
                     recipes.find((recipe) => recipe.name === recipeName);
                 if (!matchedRecipe) {
@@ -483,7 +485,7 @@ function openBoard(board) {
                 // Remove the recipe from this board
                 board.recipes = board.recipes.filter((name) => name !== recipeName);
                 // Save the updated boards
-                localStorage.setItem("recipeBoards", JSON.stringify(savedBoards));
+                store.setItem("recipeBoards", JSON.stringify(savedBoards));
                 // Update the recipe count on the board card
                 const boardCard = document.querySelector(`.board-card[data-board-id="${board.id}"]`);
                 const recipeCount = boardCard?.querySelector(".board-info p");
@@ -605,7 +607,7 @@ function displayBoard(board) {
         // Remove it from the saved boards
         savedBoards.splice(boardIndex, 1);
         // Update localStorage
-        localStorage.setItem("recipeBoards", JSON.stringify(savedBoards));
+        store.setItem("recipeBoards", JSON.stringify(savedBoards));
         // Remove its card from the page
         card.remove();
         updateEmptyBoardsMessage();
@@ -616,6 +618,7 @@ function displayBoard(board) {
         }
     });
     menuOptions.appendChild(editButton);
+    menuOptions.appendChild(createShareButton("board", String(board.id)));
     menuOptions.appendChild(deleteButton);
     boardMenu.appendChild(menuButton);
     boardMenu.appendChild(menuOptions);
@@ -630,7 +633,7 @@ function displayBoard(board) {
     updateEmptyBoardsMessage();
 }
 // Retrieve previously created boards
-const savedBoards = JSON.parse(localStorage.getItem("recipeBoards") ?? "[]");
+const savedBoards = JSON.parse(store.getItem("recipeBoards") ?? "[]");
 // Display boards when the page loads
 savedBoards.forEach((board) => {
     displayBoard(board);
@@ -664,7 +667,7 @@ newBoardForm?.addEventListener("submit", async (event) => {
         coverPhoto: coverPhoto
     };
     savedBoards.push(newBoard);
-    localStorage.setItem("recipeBoards", JSON.stringify(savedBoards));
+    store.setItem("recipeBoards", JSON.stringify(savedBoards));
     displayBoard(newBoard);
     newBoardForm.reset();
     if (createBoardForm) {
@@ -720,7 +723,7 @@ boardEditForm?.addEventListener("submit", async (event) => {
     board.visibility = editBoardVisibility.value;
     board.coverPhoto = updatedCoverPhoto;
     // Save changes to localStorage
-    localStorage.setItem("recipeBoards", JSON.stringify(savedBoards));
+    store.setItem("recipeBoards", JSON.stringify(savedBoards));
     // Update the displayed board cards
     document.querySelectorAll(".boards-grid .board-card").forEach((card) => {
         if (card.dataset.boardId === String(boardId)) {
@@ -827,7 +830,7 @@ newRecipeForm?.addEventListener("submit", (event) => {
         alert("Please complete all recipe fields.");
         return;
     }
-    const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+    const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
     const duplicateRecipe = savedRecipes.some((recipe) => recipe.name.toLowerCase() === name.toLowerCase());
     if (duplicateRecipe) {
         alert("A saved recipe with this name already exists.");
@@ -843,7 +846,7 @@ newRecipeForm?.addEventListener("submit", (event) => {
         instructions: instructions
     };
     savedRecipes.push(newRecipe);
-    localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes));
+    store.setItem("savedRecipes", JSON.stringify(savedRecipes));
     displaySavedRecipes();
     newRecipeForm.reset();
     if (createRecipeForm) {
@@ -907,7 +910,7 @@ recipeEditForm?.addEventListener("submit", (event) => {
         alert("Please complete all recipe fields.");
         return;
     }
-    const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+    const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
     const recipeIndex = savedRecipes.findIndex((recipe) => recipe.name === originalName);
     if (recipeIndex === -1) {
         alert("The recipe could not be found.");
@@ -932,13 +935,13 @@ recipeEditForm?.addEventListener("submit", (event) => {
     };
     savedRecipes[recipeIndex] = updatedRecipe;
     // Update recipe names in all boards
-    const boards = JSON.parse(localStorage.getItem("recipeBoards") ?? "[]");
+    const boards = JSON.parse(store.getItem("recipeBoards") ?? "[]");
     boards.forEach((board) => {
         board.recipes = board.recipes.map((name) => name === originalName ? updatedName : name);
     });
     // Save the changes
-    localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes));
-    localStorage.setItem("recipeBoards", JSON.stringify(boards));
+    store.setItem("savedRecipes", JSON.stringify(savedRecipes));
+    store.setItem("recipeBoards", JSON.stringify(boards));
     // Keep the existing board objects synchronized
     savedBoards.forEach((board) => {
         const updatedBoard = boards.find((item) => item.id === board.id);
