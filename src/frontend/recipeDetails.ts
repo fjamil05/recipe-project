@@ -1,3 +1,4 @@
+import { store, communityRecipes } from "./store.js";
 
 export interface RecipeDetails {
     name: string;
@@ -82,12 +83,19 @@ document.addEventListener("click", (event: MouseEvent) => {
     }
 
     const savedRecipes: RecipeDetails[] = JSON.parse(
-        localStorage.getItem("savedRecipes") ?? "[]"
+        store.getItem("savedRecipes") ?? "[]"
     );
 
-    const matchedRecipe = savedRecipes.find(
-        (recipe) => recipe.name === recipeName
-    );
+    // Recipes shared by other users are marked with data-owner
+    const owner = recipeCard?.getAttribute("data-owner");
+
+    const matchedRecipe = owner
+        ? communityRecipes.find(
+            (recipe) => recipe.name === recipeName && recipe.owner === owner
+        )
+        : savedRecipes.find(
+            (recipe) => recipe.name === recipeName
+        );
 
     if (!matchedRecipe) {
         alert("Recipe details could not be found.");
@@ -154,7 +162,7 @@ saveToBoardButton?.addEventListener("click", () => {
     }
 
     const boards: RecipeBoard[] = JSON.parse(
-        localStorage.getItem("recipeBoards") ?? "[]"
+        store.getItem("recipeBoards") ?? "[]"
     );
 
     saveBoardSelect.replaceChildren();
@@ -197,6 +205,52 @@ cancelSaveBoardButton?.addEventListener("click", () => {
     }
 });
 
+// If the selected recipe was shared by another user, save a copy of it
+// into this account first. Returns the name the recipe is saved under.
+function saveSelectedRecipeToAccount(recipe: RecipeDetails): string {
+    if (!("owner" in recipe)) {
+        return recipe.name;
+    }
+
+    const owner = String(recipe.owner);
+    const savedRecipes: RecipeDetails[] = JSON.parse(
+        store.getItem("savedRecipes") ?? "[]"
+    );
+
+    const findSaved = (name: string) => savedRecipes.find(
+        (saved) => saved.name.toLowerCase() === name.toLowerCase()
+    );
+
+    const sameContent = (saved: RecipeDetails) =>
+        JSON.stringify([saved.ingredients, saved.instructions]) ===
+        JSON.stringify([recipe.ingredients, recipe.instructions]);
+
+    // Already saved earlier
+    const existing = findSaved(recipe.name);
+    if (existing && sameContent(existing)) {
+        return existing.name;
+    }
+
+    // You already have a different recipe with this name
+    const name = existing ? `${recipe.name} (from ${owner})` : recipe.name;
+    if (findSaved(name)) {
+        return name;
+    }
+
+    savedRecipes.push({
+        name,
+        category: recipe.category,
+        time: recipe.time,
+        difficulty: recipe.difficulty,
+        rating: recipe.rating,
+        ingredients: [...recipe.ingredients],
+        instructions: [...recipe.instructions]
+    });
+
+    store.setItem("savedRecipes", JSON.stringify(savedRecipes));
+    return name;
+}
+
 // Save the selected recipe
 
 
@@ -205,14 +259,14 @@ confirmSaveBoardButton?.addEventListener("click", () => {
         return;
     }
 
-    const recipeName = selectedRecipe.name;
+    const recipeName = saveSelectedRecipeToAccount(selectedRecipe);
 
     const destination = document.querySelector<HTMLInputElement>(
         'input[name="save-destination"]:checked'
     )?.value;
 
     const boards: RecipeBoard[] = JSON.parse(
-        localStorage.getItem("recipeBoards") ?? "[]"
+        store.getItem("recipeBoards") ?? "[]"
     );
 
     if (destination === "unsorted") {
@@ -222,7 +276,7 @@ confirmSaveBoardButton?.addEventListener("click", () => {
             );
         });
 
-        localStorage.setItem(
+        store.setItem(
             "recipeBoards",
             JSON.stringify(boards)
         );
@@ -260,7 +314,7 @@ confirmSaveBoardButton?.addEventListener("click", () => {
 
         selectedBoard.recipes.push(recipeName);
 
-        localStorage.setItem(
+        store.setItem(
             "recipeBoards",
             JSON.stringify(boards)
         );

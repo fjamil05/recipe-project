@@ -1,3 +1,4 @@
+import { store } from "./store.js";
 const previousWeekButton = document.querySelector("#previous-week");
 const nextWeekButton = document.querySelector("#next-week");
 const currentWeekHeading = document.querySelector("#current-week");
@@ -88,7 +89,7 @@ function formatPlannerDate(date) {
 }
 // Display recipes for the selected week
 function displayPlannedRecipes() {
-    const plannedRecipes = JSON.parse(localStorage.getItem("plannedRecipes") ?? "[]");
+    const plannedRecipes = JSON.parse(store.getItem("plannedRecipes") ?? "[]");
     plannedRecipeContainers.forEach((container, index) => {
         container.replaceChildren();
         const date = new Date(displayedMonday);
@@ -111,13 +112,13 @@ function displayPlannedRecipes() {
                 card.classList.add("completed");
             }
             completionCheckbox.addEventListener("change", () => {
-                const plannedRecipes = JSON.parse(localStorage.getItem("plannedRecipes") ?? "[]");
+                const plannedRecipes = JSON.parse(store.getItem("plannedRecipes") ?? "[]");
                 const recipeToUpdate = plannedRecipes.find((plan) => plan.id === recipe.id);
                 if (!recipeToUpdate) {
                     return;
                 }
                 recipeToUpdate.completed = completionCheckbox.checked;
-                localStorage.setItem("plannedRecipes", JSON.stringify(plannedRecipes));
+                store.setItem("plannedRecipes", JSON.stringify(plannedRecipes));
                 card.classList.toggle("completed", completionCheckbox.checked);
             });
             // Three-dot menu
@@ -164,9 +165,9 @@ function displayPlannedRecipes() {
                 if (!confirmed) {
                     return;
                 }
-                const savedPlans = JSON.parse(localStorage.getItem("plannedRecipes") ?? "[]");
+                const savedPlans = JSON.parse(store.getItem("plannedRecipes") ?? "[]");
                 const updatedPlans = savedPlans.filter((plan) => plan.id !== recipe.id);
-                localStorage.setItem("plannedRecipes", JSON.stringify(updatedPlans));
+                store.setItem("plannedRecipes", JSON.stringify(updatedPlans));
                 displayPlannedRecipes();
             });
             menuButton.addEventListener("click", () => {
@@ -198,7 +199,7 @@ addRecipeButtons.forEach((button, index) => {
         const date = new Date(displayedMonday);
         date.setDate(date.getDate() + index);
         selectedPlannerDate = formatPlannerDate(date);
-        const savedRecipes = JSON.parse(localStorage.getItem("savedRecipes") ?? "[]");
+        const savedRecipes = JSON.parse(store.getItem("savedRecipes") ?? "[]");
         plannerRecipeSelect.replaceChildren();
         const defaultOption = document.createElement("option");
         defaultOption.value = "";
@@ -231,7 +232,7 @@ addPlannerRecipeForm?.addEventListener("submit", (event) => {
     if (!recipeName) {
         return;
     }
-    const plannedRecipes = JSON.parse(localStorage.getItem("plannedRecipes") ?? "[]");
+    const plannedRecipes = JSON.parse(store.getItem("plannedRecipes") ?? "[]");
     const newPlannedRecipe = {
         id: Date.now(),
         recipeName: recipeName,
@@ -239,7 +240,7 @@ addPlannerRecipeForm?.addEventListener("submit", (event) => {
         completed: false
     };
     plannedRecipes.push(newPlannedRecipe);
-    localStorage.setItem("plannedRecipes", JSON.stringify(plannedRecipes));
+    store.setItem("plannedRecipes", JSON.stringify(plannedRecipes));
     plannerForm.hidden = true;
     addPlannerRecipeForm.reset();
     selectedPlannerDate = "";
@@ -261,7 +262,7 @@ editPlannerRecipeForm?.addEventListener("submit", (event) => {
     if (!updatedDate) {
         return;
     }
-    const plannedRecipes = JSON.parse(localStorage.getItem("plannedRecipes") ?? "[]");
+    const plannedRecipes = JSON.parse(store.getItem("plannedRecipes") ?? "[]");
     const recipeToEdit = plannedRecipes.find((recipe) => recipe.id === editingPlannedRecipeId);
     if (!recipeToEdit) {
         alert("The planned recipe could not be found.");
@@ -269,7 +270,7 @@ editPlannerRecipeForm?.addEventListener("submit", (event) => {
     }
     // Change the date without changing the recipe
     recipeToEdit.date = updatedDate;
-    localStorage.setItem("plannedRecipes", JSON.stringify(plannedRecipes));
+    store.setItem("plannedRecipes", JSON.stringify(plannedRecipes));
     if (editPlannerForm) {
         editPlannerForm.hidden = true;
     }
@@ -287,4 +288,3 @@ cancelPlannerEditButton?.addEventListener("click", () => {
 });
 // Load recipes when the page opens
 displayPlannedRecipes();
-export {};

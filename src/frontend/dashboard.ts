@@ -1,3 +1,4 @@
+import { store } from "./store.js";
 
 const previousWeekButton =
     document.querySelector<HTMLButtonElement>("#previous-week");
@@ -182,7 +183,7 @@ function formatPlannerDate(date: Date): string {
 // Display recipes for the selected week
 function displayPlannedRecipes(): void {
     const plannedRecipes: PlannedRecipe[] = JSON.parse(
-        localStorage.getItem("plannedRecipes") ?? "[]"
+        store.getItem("plannedRecipes") ?? "[]"
     );
 
     plannedRecipeContainers.forEach((container, index) => {
@@ -220,7 +221,7 @@ recipesForDay.forEach((recipe) => {
 
     completionCheckbox.addEventListener("change", () => {
         const plannedRecipes: PlannedRecipe[] = JSON.parse(
-            localStorage.getItem("plannedRecipes") ?? "[]"
+            store.getItem("plannedRecipes") ?? "[]"
         );
 
         const recipeToUpdate = plannedRecipes.find(
@@ -233,7 +234,7 @@ recipesForDay.forEach((recipe) => {
 
         recipeToUpdate.completed = completionCheckbox.checked;
 
-        localStorage.setItem(
+        store.setItem(
             "plannedRecipes",
             JSON.stringify(plannedRecipes)
         );
@@ -307,14 +308,14 @@ editButton.addEventListener("click", () => {
         }
 
         const savedPlans: PlannedRecipe[] = JSON.parse(
-            localStorage.getItem("plannedRecipes") ?? "[]"
+            store.getItem("plannedRecipes") ?? "[]"
         );
 
         const updatedPlans = savedPlans.filter(
             (plan) => plan.id !== recipe.id
         );
 
-        localStorage.setItem(
+        store.setItem(
             "plannedRecipes",
             JSON.stringify(updatedPlans)
         );
@@ -371,7 +372,7 @@ addRecipeButtons.forEach((button, index) => {
         selectedPlannerDate = formatPlannerDate(date);
 
         const savedRecipes: SavedRecipe[] = JSON.parse(
-            localStorage.getItem("savedRecipes") ?? "[]"
+            store.getItem("savedRecipes") ?? "[]"
         );
 
         plannerRecipeSelect.replaceChildren();
@@ -417,7 +418,7 @@ addPlannerRecipeForm?.addEventListener("submit", (event) => {
     }
 
     const plannedRecipes: PlannedRecipe[] = JSON.parse(
-        localStorage.getItem("plannedRecipes") ?? "[]"
+        store.getItem("plannedRecipes") ?? "[]"
     );
 
     const newPlannedRecipe: PlannedRecipe = {
@@ -429,7 +430,7 @@ addPlannerRecipeForm?.addEventListener("submit", (event) => {
 
     plannedRecipes.push(newPlannedRecipe);
 
-    localStorage.setItem(
+    store.setItem(
         "plannedRecipes",
         JSON.stringify(plannedRecipes)
     );
@@ -466,7 +467,7 @@ editPlannerRecipeForm?.addEventListener("submit", (event) => {
     }
 
     const plannedRecipes: PlannedRecipe[] = JSON.parse(
-        localStorage.getItem("plannedRecipes") ?? "[]"
+        store.getItem("plannedRecipes") ?? "[]"
     );
 
     const recipeToEdit = plannedRecipes.find(
@@ -481,7 +482,7 @@ editPlannerRecipeForm?.addEventListener("submit", (event) => {
     // Change the date without changing the recipe
     recipeToEdit.date = updatedDate;
 
-    localStorage.setItem(
+    store.setItem(
         "plannedRecipes",
         JSON.stringify(plannedRecipes)
     );

@@ -1,4 +1,5 @@
 import { recipes, type RecipeDetails } from "./recipeDetails.js";
+import { store, createShareButton } from "./store.js";
 interface SavedRecipe {
     name: string;
     category: string;
@@ -24,14 +25,14 @@ function displaySavedRecipes(): void {
     }
 
     const savedRecipes: SavedRecipe[] = JSON.parse(
-        localStorage.getItem("savedRecipes") ?? "[]"
+        store.getItem("savedRecipes") ?? "[]"
     );
 
     savedRecipesList.replaceChildren();
 
 
 const boards: RecipeBoard[] = JSON.parse(
-    localStorage.getItem("recipeBoards") ?? "[]"
+    store.getItem("recipeBoards") ?? "[]"
 );
 
 const unsortedRecipes = savedRecipes.filter((recipe) => {
@@ -171,14 +172,14 @@ const unsortedRecipes = savedRecipes.filter((recipe) => {
 
             // Remove the recipe from saved recipes
             const savedRecipes: SavedRecipe[] = JSON.parse(
-                localStorage.getItem("savedRecipes") ?? "[]"
+                store.getItem("savedRecipes") ?? "[]"
             );
 
             const updatedRecipes = savedRecipes.filter(
                 (savedRecipe) => savedRecipe.name !== recipe.name
             );
 
-            localStorage.setItem(
+            store.setItem(
                 "savedRecipes",
                 JSON.stringify(updatedRecipes)
             );
@@ -190,7 +191,7 @@ const unsortedRecipes = savedRecipes.filter((recipe) => {
                 );
             });
 
-            localStorage.setItem(
+            store.setItem(
                 "recipeBoards",
                 JSON.stringify(savedBoards)
             );
@@ -228,6 +229,7 @@ const unsortedRecipes = savedRecipes.filter((recipe) => {
         });
 
         menuOptions.appendChild(editRecipeButton);
+        menuOptions.appendChild(createShareButton("recipe", recipe.name));
         menuOptions.appendChild(deleteRecipeButton);
 
         recipeMenu.appendChild(menuButton);
@@ -321,7 +323,7 @@ addToBoardConfirm.addEventListener("click", () => {
     const selectedBoardId = Number(boardSelect.value);
 
     const boards: RecipeBoard[] = JSON.parse(
-        localStorage.getItem("recipeBoards") ?? "[]"
+        store.getItem("recipeBoards") ?? "[]"
     );
 
     const selectedBoard = boards.find(
@@ -352,7 +354,7 @@ addToBoardConfirm.addEventListener("click", () => {
     }
 
     // Save the updated boards
-    localStorage.setItem(
+    store.setItem(
         "recipeBoards",
         JSON.stringify(boards)
     );
@@ -625,7 +627,7 @@ board.recipes.forEach((recipeName) => {
     // Edit a recipe from inside a board
     editRecipeButton.addEventListener("click", () => {
         const savedRecipes: SavedRecipe[] = JSON.parse(
-            localStorage.getItem("savedRecipes") ?? "[]"
+            store.getItem("savedRecipes") ?? "[]"
         );
 
         const recipe = savedRecipes.find(
@@ -718,7 +720,7 @@ board.recipes.forEach((recipeName) => {
 
         // Remove the recipe from savedRecipes
         const savedRecipes: SavedRecipe[] = JSON.parse(
-            localStorage.getItem("savedRecipes") ?? "[]"
+            store.getItem("savedRecipes") ?? "[]"
         );
 
         const updatedRecipes = savedRecipes.filter(
@@ -730,7 +732,7 @@ board.recipes.forEach((recipeName) => {
             return;
         }
 
-        localStorage.setItem(
+        store.setItem(
             "savedRecipes",
             JSON.stringify(updatedRecipes)
         );
@@ -742,7 +744,7 @@ board.recipes.forEach((recipeName) => {
             );
         });
 
-        localStorage.setItem(
+        store.setItem(
             "recipeBoards",
             JSON.stringify(savedBoards)
         );
@@ -783,7 +785,7 @@ board.recipes.forEach((recipeName) => {
         );
     });
 
-    menuOptions.append(editRecipeButton, deleteRecipeButton);
+    menuOptions.append(editRecipeButton, createShareButton("recipe", recipeName), deleteRecipeButton);
     recipeMenu.append(menuButton, menuOptions);
 
 
@@ -795,7 +797,7 @@ viewButton.textContent = "View Recipe";
 
 viewButton.addEventListener("click", () => {
     const savedRecipes: SavedRecipe[] = JSON.parse(
-        localStorage.getItem("savedRecipes") ?? "[]"
+        store.getItem("savedRecipes") ?? "[]"
     );
 
     const matchedRecipe =
@@ -832,7 +834,7 @@ viewButton.addEventListener("click", () => {
         );
 
         // Save the updated boards
-        localStorage.setItem(
+        store.setItem(
             "recipeBoards",
             JSON.stringify(savedBoards)
         );
@@ -1023,7 +1025,7 @@ deleteButton.addEventListener("click", () => {
     savedBoards.splice(boardIndex, 1);
 
     // Update localStorage
-    localStorage.setItem(
+    store.setItem(
         "recipeBoards",
         JSON.stringify(savedBoards)
     );
@@ -1045,6 +1047,7 @@ deleteButton.addEventListener("click", () => {
 
 
     menuOptions.appendChild(editButton);
+    menuOptions.appendChild(createShareButton("board", String(board.id)));
     menuOptions.appendChild(deleteButton);
 
     boardMenu.appendChild(menuButton);
@@ -1070,7 +1073,7 @@ deleteButton.addEventListener("click", () => {
 
 // Retrieve previously created boards
 const savedBoards: RecipeBoard[] = JSON.parse(
-    localStorage.getItem("recipeBoards") ?? "[]"
+    store.getItem("recipeBoards") ?? "[]"
 );
 
 // Display boards when the page loads
@@ -1119,7 +1122,7 @@ const newBoard: RecipeBoard = {
 
     savedBoards.push(newBoard);
 
-    localStorage.setItem(
+    store.setItem(
         "recipeBoards",
         JSON.stringify(savedBoards)
     );
@@ -1213,7 +1216,7 @@ boardEditForm?.addEventListener("submit", async (event) => {
 
 
     // Save changes to localStorage
-    localStorage.setItem(
+    store.setItem(
         "recipeBoards",
         JSON.stringify(savedBoards)
     );
@@ -1379,7 +1382,7 @@ newRecipeForm?.addEventListener("submit", (event) => {
     }
 
     const savedRecipes: SavedRecipe[] = JSON.parse(
-        localStorage.getItem("savedRecipes") ?? "[]"
+        store.getItem("savedRecipes") ?? "[]"
     );
 
     const duplicateRecipe = savedRecipes.some(
@@ -1403,7 +1406,7 @@ newRecipeForm?.addEventListener("submit", (event) => {
 
     savedRecipes.push(newRecipe);
 
-    localStorage.setItem("savedRecipes", JSON.stringify(savedRecipes));
+    store.setItem("savedRecipes", JSON.stringify(savedRecipes));
 
     displaySavedRecipes();
 
@@ -1510,7 +1513,7 @@ recipeEditForm?.addEventListener("submit", (event) => {
     }
 
     const savedRecipes: SavedRecipe[] = JSON.parse(
-        localStorage.getItem("savedRecipes") ?? "[]"
+        store.getItem("savedRecipes") ?? "[]"
     );
 
     const recipeIndex = savedRecipes.findIndex(
@@ -1549,7 +1552,7 @@ recipeEditForm?.addEventListener("submit", (event) => {
 
     // Update recipe names in all boards
     const boards: RecipeBoard[] = JSON.parse(
-        localStorage.getItem("recipeBoards") ?? "[]"
+        store.getItem("recipeBoards") ?? "[]"
     );
 
     boards.forEach((board) => {
@@ -1559,12 +1562,12 @@ recipeEditForm?.addEventListener("submit", (event) => {
     });
 
     // Save the changes
-    localStorage.setItem(
+    store.setItem(
         "savedRecipes",
         JSON.stringify(savedRecipes)
     );
 
-    localStorage.setItem(
+    store.setItem(
         "recipeBoards",
         JSON.stringify(boards)
     );

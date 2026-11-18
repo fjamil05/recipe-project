@@ -1,3 +1,4 @@
+import { store, communityRecipes, type CommunityRecipe } from "./store.js";
 
 function filterRecipes(): void {
     const searchInput =
@@ -128,7 +129,7 @@ function loadSavedRecipes(): void {
     }
 
     const savedRecipes: SearchRecipe[] = JSON.parse(
-        localStorage.getItem("savedRecipes") ?? "[]"
+        store.getItem("savedRecipes") ?? "[]"
     );
 
     // Remove existing recipe cards
@@ -176,5 +177,75 @@ function loadSavedRecipes(): void {
 }
 
 loadSavedRecipes();
+
+
+// =========================================
+// Recipes shared by other users
+// =========================================
+// Shows recipes from everyone else's "Shared" boards after your own recipes.
+
+async function loadCommunityRecipes(): Promise<void> {
+    const recipeGrid =
+        document.querySelector<HTMLElement>(".recipe-grid");
+
+    if (!recipeGrid) {
+        return;
+    }
+
+    const response = await fetch("/api/community-recipes");
+
+    if (!response.ok) {
+        return;
+    }
+
+    const sharedRecipes: CommunityRecipe[] = await response.json();
+    communityRecipes.splice(0, communityRecipes.length, ...sharedRecipes);
+
+    sharedRecipes.forEach((recipe) => {
+        const card = document.createElement("article");
+        card.className = "recipe-card community-recipe";
+        card.dataset.owner = recipe.owner;
+
+        const recipeInfo = document.createElement("div");
+        recipeInfo.className = "recipe-info";
+
+        const name = document.createElement("h3");
+        name.textContent = recipe.name;
+
+        const category = document.createElement("p");
+        category.textContent = recipe.category;
+
+        const time = document.createElement("p");
+        time.textContent = `Time: ${recipe.time} minutes`;
+
+        const difficulty = document.createElement("p");
+        difficulty.textContent = `Difficulty: ${recipe.difficulty}`;
+
+        const sharedBy = document.createElement("p");
+        sharedBy.className = "shared-by";
+        sharedBy.textContent = `Shared by ${recipe.owner}`;
+
+        const viewButton = document.createElement("button");
+        viewButton.type = "button";
+        viewButton.className = "view-recipe-button";
+        viewButton.textContent = "View Recipe";
+
+        recipeInfo.append(
+            name,
+            category,
+            time,
+            difficulty,
+            sharedBy,
+            viewButton
+        );
+
+        card.appendChild(recipeInfo);
+        recipeGrid.appendChild(card);
+    });
+
+    filterRecipes();
+}
+
+loadCommunityRecipes();
 
 export {};
