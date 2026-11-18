@@ -2,11 +2,15 @@
   "name": "recipe-project",
   "version": "1.0.0",
   "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
   "description": "",
   "main": "index.js",
   "scripts": {
     "build": "tsc -p tsconfig.frontend.json",
-    "dev": "npm run build && tsx src/server.ts"
+    "dev": "npm run build && tsx src/server.ts",
+    "start": "tsx src/server.ts"
   },
   "keywords": [],
   "author": "",

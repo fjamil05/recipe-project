@@ -1,4 +1,6 @@
 import { store } from "./store.js";
+import { notify, el, api } from "./ui.js";
+import { renderGroceryList } from "./grocery.js";
 
 const previousWeekButton =
     document.querySelector<HTMLButtonElement>("#previous-week");
@@ -182,6 +184,9 @@ function formatPlannerDate(date: Date): string {
 
 // Display recipes for the selected week
 function displayPlannedRecipes(): void {
+    // Keep the grocery list in sync with the week being shown
+    renderGroceryList(displayedMonday);
+
     const plannedRecipes: PlannedRecipe[] = JSON.parse(
         store.getItem("plannedRecipes") ?? "[]"
     );
@@ -475,7 +480,7 @@ editPlannerRecipeForm?.addEventListener("submit", (event) => {
     );
 
     if (!recipeToEdit) {
-        alert("The planned recipe could not be found.");
+        notify("The planned recipe could not be found.");
         return;
     }
 
@@ -513,3 +518,41 @@ cancelPlannerEditButton?.addEventListener("click", () => {
 displayPlannedRecipes();
 
 export {};
+
+
+
+// =========================================
+// Collaborators
+// =========================================
+// Everyone you share at least one board with
+
+async function loadCollaborators(): Promise<void> {
+    const container = document.querySelector<HTMLElement>("#team-members");
+
+    if (!container) {
+        return;
+    }
+
+    const result = await api<string[]>("GET", "/api/collaborators");
+    container.replaceChildren();
+
+    if (!result.ok || result.data.length === 0) {
+        container.appendChild(el(
+            "p",
+            "No collaborators yet. On the Boards page, open a board's ⋮ menu and choose Collaborators to invite someone.",
+            "collab-empty"
+        ));
+        return;
+    }
+
+    result.data.forEach((username) => {
+        const member = el("div", undefined, "member");
+        member.append(
+            el("div", username.charAt(0).toUpperCase(), "member-avatar"),
+            el("p", username)
+        );
+        container.appendChild(member);
+    });
+}
+
+loadCollaborators();

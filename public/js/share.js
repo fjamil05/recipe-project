@@ -3,6 +3,7 @@
 // =========================================
 // Shows a recipe or board someone shared with a link.
 // No login needed, and nothing here can be edited.
+import { renderReviews } from "./reviews.js";
 const shareContent = document.querySelector("#share-content");
 function element(tag, text, className) {
     const el = document.createElement(tag);
@@ -14,7 +15,7 @@ function element(tag, text, className) {
     }
     return el;
 }
-function renderRecipe(recipe) {
+function renderRecipe(recipe, owner) {
     const card = element("article", undefined, "recipe-card shared-recipe");
     const info = element("div", undefined, "recipe-info");
     info.append(element("h3", recipe.name), element("p", recipe.category), element("p", `Time: ${recipe.time} minutes`), element("p", `Difficulty: ${recipe.difficulty}`), element("p", `Enjoyment Rating: ${recipe.rating}`));
@@ -23,6 +24,10 @@ function renderRecipe(recipe) {
     const instructionsList = element("ol");
     recipe.instructions.forEach((step) => instructionsList.appendChild(element("li", step)));
     info.append(element("h4", "Ingredients"), ingredientsList, element("h4", "Instructions"), instructionsList);
+    // Star ratings and comments (log in to leave your own)
+    const reviews = element("section", undefined, "recipe-reviews");
+    info.appendChild(reviews);
+    renderReviews(reviews, { id: recipe.id, name: recipe.name, owner });
     card.appendChild(info);
     return card;
 }
@@ -44,7 +49,7 @@ async function loadSharedItem() {
     }
     if (data.type === "recipe") {
         document.title = `${data.recipe.name} - Recipe Tracker`;
-        shareContent.replaceChildren(element("h1", data.recipe.name), element("p", `Shared by ${data.owner}`, "shared-by"), renderRecipe(data.recipe));
+        shareContent.replaceChildren(element("h1", data.recipe.name), element("p", `Shared by ${data.owner}`, "shared-by"), renderRecipe(data.recipe, data.owner));
         return;
     }
     document.title = `${data.board.name} - Recipe Tracker`;
@@ -62,9 +67,8 @@ async function loadSharedItem() {
         parts.push(element("p", "This board doesn't have any recipes yet."));
     }
     const grid = element("section", undefined, "recipe-grid");
-    data.board.recipes.forEach((recipe) => grid.appendChild(renderRecipe(recipe)));
+    data.board.recipes.forEach((recipe) => grid.appendChild(renderRecipe(recipe, data.owner)));
     parts.push(grid);
     shareContent.replaceChildren(...parts);
 }
 loadSharedItem();
-export {};

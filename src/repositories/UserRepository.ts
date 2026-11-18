@@ -91,4 +91,45 @@ public async createUser(
     return new User(userId, username, email);
 }
 
+
+// Checks the current password, then saves a new one
+public async changePassword(
+    userId: number,
+    currentPassword: string,
+    newPassword: string
+): Promise<boolean> {
+    const rows = await pool.query(
+        "SELECT password_hash FROM Users WHERE user_id = ?",
+        [userId]
+    );
+
+    if (rows.length === 0 || !(await bcrypt.compare(currentPassword, rows[0].password_hash))) {
+        return false;
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    await pool.query(
+        "UPDATE Users SET password_hash = ? WHERE user_id = ?",
+        [passwordHash, userId]
+    );
+    return true;
+}
+
+
+// Permanently deletes the account and everything that belongs to it
+// (recipes, boards, reviews, planner) after checking the password
+public async deleteAccount(userId: number, password: string): Promise<boolean> {
+    const rows = await pool.query(
+        "SELECT password_hash FROM Users WHERE user_id = ?",
+        [userId]
+    );
+
+    if (rows.length === 0 || !(await bcrypt.compare(password, rows[0].password_hash))) {
+        return false;
+    }
+
+    await pool.query("DELETE FROM Users WHERE user_id = ?", [userId]);
+    return true;
+}
+
 }

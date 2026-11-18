@@ -28,7 +28,14 @@ function filterRecipes() {
         const difficulty = difficultyText
             .replace("Difficulty:", "")
             .trim();
-        const matchesSearch = recipeName.toLowerCase().includes(searchText);
+        // Match the recipe name or its ingredients. Separate several
+        // ingredients with commas, e.g. "chicken, rice" finds recipes with both.
+        const searchable = `${recipeName}\n${card.dataset.ingredients ?? ""}`.toLowerCase();
+        const matchesSearch = searchText
+            .split(",")
+            .map((term) => term.trim())
+            .filter((term) => term.length > 0)
+            .every((term) => searchable.includes(term));
         const matchesCategory = selectedCategory === "" || category === selectedCategory;
         const matchesDifficulty = selectedDifficulty === "" || difficulty === selectedDifficulty;
         const matchesTime = selectedTime === 0 || time < selectedTime;
@@ -67,6 +74,7 @@ function loadSavedRecipes() {
     savedRecipes.forEach((recipe) => {
         const card = document.createElement("article");
         card.className = "recipe-card";
+        card.dataset.ingredients = recipe.ingredients.join("\n");
         const recipeInfo = document.createElement("div");
         recipeInfo.className = "recipe-info";
         const name = document.createElement("h3");
@@ -107,6 +115,7 @@ async function loadCommunityRecipes() {
         const card = document.createElement("article");
         card.className = "recipe-card community-recipe";
         card.dataset.owner = recipe.owner;
+        card.dataset.ingredients = recipe.ingredients.join("\n");
         const recipeInfo = document.createElement("div");
         recipeInfo.className = "recipe-info";
         const name = document.createElement("h3");
@@ -119,7 +128,9 @@ async function loadCommunityRecipes() {
         difficulty.textContent = `Difficulty: ${recipe.difficulty}`;
         const sharedBy = document.createElement("p");
         sharedBy.className = "shared-by";
-        sharedBy.textContent = `Shared by ${recipe.owner}`;
+        sharedBy.textContent = recipe.reviewCount > 0 && recipe.averageStars !== null
+            ? `Shared by ${recipe.owner} · ${Math.round(recipe.averageStars * 10) / 10}/5 (${recipe.reviewCount})`
+            : `Shared by ${recipe.owner}`;
         const viewButton = document.createElement("button");
         viewButton.type = "button";
         viewButton.className = "view-recipe-button";

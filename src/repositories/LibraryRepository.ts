@@ -2,8 +2,10 @@
 import { randomBytes } from "node:crypto";
 import pool from "../database.js";
 
-// Same shape the frontend already uses for saved recipes
+// Same shape the frontend already uses for saved recipes.
+// "id" is the database id (sent to the browser, ignored when saving).
 export interface RecipeData {
+    id?: number;
     name: string;
     category: string;
     time: number;
@@ -31,6 +33,8 @@ export interface Library {
 export interface CommunityRecipe extends RecipeData {
     owner: string;
     boardName: string;
+    averageStars: number | null;
+    reviewCount: number;
 }
 
 export type SharedItem =
@@ -41,19 +45,10 @@ export type SharedItem =
         board: { name: string; coverPhoto?: string | undefined; recipes: RecipeData[] };
     };
 
-interface RecipeRow {
-    recipe_id: number;
-    name: string;
-    category: string;
-    time_minutes: number;
-    difficulty: string;
-    rating: string;
-    ingredients: string;
-    instructions: string;
-}
-
-const RECIPE_COLUMNS =
+export const RECIPE_COLUMNS =
     "r.recipe_id, r.name, r.category, r.time_minutes, r.difficulty, r.rating, r.ingredients, r.instructions";
+
+const MAX_PHOTO_LENGTH = 3_000_000;
 
 function parseList(json: string): string[] {
     try {
@@ -64,8 +59,9 @@ function parseList(json: string): string[] {
     }
 }
 
-function toRecipe(row: RecipeRow): RecipeData {
+export function toRecipe(row: any): RecipeData {
     return {
+        id: row.recipe_id,
         name: row.name,
         category: row.category,
         time: Number(row.time_minutes),
@@ -78,6 +74,12 @@ function toRecipe(row: RecipeRow): RecipeData {
 
 function text(value: unknown, maxLength: number): string {
     return String(value ?? "").trim().slice(0, maxLength);
+}
+
+function photo(value: unknown): string | undefined {
+    return typeof value === "string" && value.startsWith("data:image/") && value.length <= MAX_PHOTO_LENGTH
+        ? value
+        : undefined;
 }
 
 // Checks and cleans data coming from the browser before it touches the database
@@ -131,7 +133,7 @@ function cleanBoards(input: unknown): BoardData[] {
             name,
             visibility: item.visibility === "Shared" ? "Shared" : "Private",
             recipes: Array.isArray(item.recipes) ? item.recipes.map((r: unknown) => text(r, 150)) : [],
-            coverPhoto: typeof item.coverPhoto === "string" ? item.coverPhoto : undefined
+            coverPhoto: photo(item.coverPhoto)
         });
     }
 
@@ -139,7 +141,7 @@ function cleanBoards(input: unknown): BoardData[] {
 }
 
 async function recipesInBoard(boardId: number): Promise<RecipeData[]> {
-    const rows: RecipeRow[] = await pool.query(
+    const rows = await pool.query(
         `SELECT ${RECIPE_COLUMNS}
          FROM BoardRecipes br JOIN Recipes r ON r.recipe_id = br.recipe_id
          WHERE br.board_id = ?
@@ -153,7 +155,7 @@ export class LibraryRepository {
 
     // Everything a user has saved, in the same format the pages already use
     public async getLibrary(userId: number): Promise<Library> {
-        const recipeRows: RecipeRow[] = await pool.query(
+        const recipeRows = await pool.query(
             `SELECT ${RECIPE_COLUMNS} FROM Recipes r WHERE r.user_id = ? ORDER BY r.position, r.recipe_id`,
             [userId]
         );
@@ -164,14 +166,16 @@ export class LibraryRepository {
             [userId]
         );
 
+        // Only the owner's own recipes; recipes collaborators added are
+        // shown in the Collaborative Boards section instead
         const memberRows = await pool.query(
             `SELECT br.board_id, r.name
              FROM BoardRecipes br
              JOIN Boards b ON b.board_id = br.board_id
              JOIN Recipes r ON r.recipe_id = br.recipe_id
-             WHERE b.user_id = ?
+             WHERE b.user_id = ? AND r.user_id = ?
              ORDER BY br.position`,
-            [userId]
+            [userId, userId]
         );
 
         const recipesByBoard = new Map<number, string[]>();
@@ -194,7 +198,7 @@ export class LibraryRepository {
     }
 
     // Replaces the user's saved recipes and boards with what the browser sent.
-    // Recipes are matched by name and boards by id, so share links survive edits.
+    // Recipes are matched by name and boards by id, so share links and reviews survive edits.
     public async saveLibrary(userId: number, input: { savedRecipes: unknown; recipeBoards: unknown }): Promise<void> {
         const recipes = cleanRecipes(input.savedRecipes);
         const boards = cleanBoards(input.recipeBoards);
@@ -217,7 +221,8 @@ export class LibraryRepository {
                         position = VALUES(position)`,
                     [
                         userId, recipe.name, recipe.category, recipe.time, recipe.difficulty, recipe.rating,
-                        JSON.stringify(recipe.ingredients), JSON.stringify(recipe.instructions), position
+                        JSON.stringify(recipe.ingredients), JSON.stringify(recipe.instructions),
+                        position
                     ]
                 );
             }
@@ -272,14 +277,20 @@ export class LibraryRepository {
                 boardIds.set(Number(row.client_id), row.board_id);
             }
 
-            // 5. Save which recipes are in each board
+            // 5. Save which of the owner's recipes are in each board
+            //    (recipes collaborators added are left alone)
             for (const board of boards) {
                 const boardId = boardIds.get(board.id);
                 if (boardId === undefined) {
                     continue;
                 }
 
-                await connection.query("DELETE FROM BoardRecipes WHERE board_id = ?", [boardId]);
+                await connection.query(
+                    `DELETE br FROM BoardRecipes br
+                     JOIN Recipes r ON r.recipe_id = br.recipe_id
+                     WHERE br.board_id = ? AND r.user_id = ?`,
+                    [boardId, userId]
+                );
 
                 const added = new Set<number>();
                 for (const [position, recipeName] of board.recipes.entries()) {
@@ -308,12 +319,14 @@ export class LibraryRepository {
     // Recipes in other users' Shared boards, for the Search page
     public async getCommunityRecipes(userId: number): Promise<CommunityRecipe[]> {
         const rows = await pool.query(
-            `SELECT ${RECIPE_COLUMNS}, u.username AS owner, b.name AS board_name
+            `SELECT ${RECIPE_COLUMNS}, u.username AS owner, b.name AS board_name,
+                    (SELECT AVG(stars) FROM Reviews rv WHERE rv.recipe_id = r.recipe_id) AS average_stars,
+                    (SELECT COUNT(*) FROM Reviews rv WHERE rv.recipe_id = r.recipe_id) AS review_count
              FROM Boards b
-             JOIN Users u ON u.user_id = b.user_id
              JOIN BoardRecipes br ON br.board_id = b.board_id
              JOIN Recipes r ON r.recipe_id = br.recipe_id
-             WHERE b.visibility = 'Shared' AND b.user_id <> ?
+             JOIN Users u ON u.user_id = r.user_id
+             WHERE b.visibility = 'Shared' AND r.user_id <> ?
              ORDER BY b.created_at DESC, br.position`,
             [userId]
         );
@@ -325,7 +338,13 @@ export class LibraryRepository {
                 continue;
             }
             seen.add(row.recipe_id);
-            recipes.push({ ...toRecipe(row), owner: row.owner, boardName: row.board_name });
+            recipes.push({
+                ...toRecipe(row),
+                owner: row.owner,
+                boardName: row.board_name,
+                averageStars: row.average_stars === null ? null : Number(row.average_stars),
+                reviewCount: Number(row.review_count)
+            });
         }
         return recipes;
     }

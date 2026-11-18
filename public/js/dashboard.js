@@ -1,4 +1,6 @@
 import { store } from "./store.js";
+import { notify, el, api } from "./ui.js";
+import { renderGroceryList } from "./grocery.js";
 const previousWeekButton = document.querySelector("#previous-week");
 const nextWeekButton = document.querySelector("#next-week");
 const currentWeekHeading = document.querySelector("#current-week");
@@ -89,6 +91,8 @@ function formatPlannerDate(date) {
 }
 // Display recipes for the selected week
 function displayPlannedRecipes() {
+    // Keep the grocery list in sync with the week being shown
+    renderGroceryList(displayedMonday);
     const plannedRecipes = JSON.parse(store.getItem("plannedRecipes") ?? "[]");
     plannedRecipeContainers.forEach((container, index) => {
         container.replaceChildren();
@@ -265,7 +269,7 @@ editPlannerRecipeForm?.addEventListener("submit", (event) => {
     const plannedRecipes = JSON.parse(store.getItem("plannedRecipes") ?? "[]");
     const recipeToEdit = plannedRecipes.find((recipe) => recipe.id === editingPlannedRecipeId);
     if (!recipeToEdit) {
-        alert("The planned recipe could not be found.");
+        notify("The planned recipe could not be found.");
         return;
     }
     // Change the date without changing the recipe
@@ -288,3 +292,25 @@ cancelPlannerEditButton?.addEventListener("click", () => {
 });
 // Load recipes when the page opens
 displayPlannedRecipes();
+// =========================================
+// Collaborators
+// =========================================
+// Everyone you share at least one board with
+async function loadCollaborators() {
+    const container = document.querySelector("#team-members");
+    if (!container) {
+        return;
+    }
+    const result = await api("GET", "/api/collaborators");
+    container.replaceChildren();
+    if (!result.ok || result.data.length === 0) {
+        container.appendChild(el("p", "No collaborators yet. On the Boards page, open a board's ⋮ menu and choose Collaborators to invite someone.", "collab-empty"));
+        return;
+    }
+    result.data.forEach((username) => {
+        const member = el("div", undefined, "member");
+        member.append(el("div", username.charAt(0).toUpperCase(), "member-avatar"), el("p", username));
+        container.appendChild(member);
+    });
+}
+loadCollaborators();

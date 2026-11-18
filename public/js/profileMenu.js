@@ -1,3 +1,6 @@
+import { store, currentUsername } from "./store.js";
+import { notify } from "./ui.js";
+import "./account.js";
 const profileMenuButton = document.querySelector("#profile-menu-button");
 const profileDropdown = document.querySelector("#profile-dropdown");
 // Open and close the profile dropdown
@@ -29,15 +32,15 @@ const editDisplayNameButton = document.querySelector("#edit-display-name");
 const profileDisplayName = document.querySelector("#profile-display-name");
 const profileAvatar = document.querySelector("#profile-avatar");
 const profileDropdownAvatar = document.querySelector("#profile-dropdown-avatar");
-// Load the saved display name or use "User" by default
-let displayName = localStorage.getItem("profileDisplayName") ?? "User";
+// Load the saved display name, or use the username by default
+let displayName = store.getItem("profileDisplayName") || currentUsername || "User";
 // Update the name and avatar initials
 function updateProfileDisplay() {
     if (profileDisplayName) {
         profileDisplayName.textContent = displayName;
     }
     const firstLetter = displayName.trim().charAt(0).toUpperCase() || "U";
-    const savedPicture = localStorage.getItem("profilePicture");
+    const savedPicture = store.getItem("profilePicture");
     // Update both avatars
     [profileAvatar, profileDropdownAvatar].forEach((avatar) => {
         if (!avatar) {
@@ -70,12 +73,12 @@ editDisplayNameButton?.addEventListener("click", () => {
     const trimmedName = newName.trim();
     // Prevent empty display names
     if (trimmedName.length === 0) {
-        alert("Display name cannot be empty.");
+        notify("Display name cannot be empty.");
         return;
     }
     // Save the new display name
     displayName = trimmedName;
-    localStorage.setItem("profileDisplayName", displayName);
+    store.setItem("profileDisplayName", displayName);
     updateProfileDisplay();
 });
 // Display the saved name when the page loads
@@ -97,7 +100,7 @@ profilePictureInput?.addEventListener("change", () => {
         return;
     }
     if (!file.type.startsWith("image/")) {
-        alert("Please select an image file.");
+        notify("Please select an image file.");
         return;
     }
     const reader = new FileReader();
@@ -121,22 +124,22 @@ profilePictureInput?.addEventListener("change", () => {
             // Convert the resized image into a smaller JPEG
             const resizedPicture = canvas.toDataURL("image/jpeg", 0.8);
             try {
-                localStorage.setItem("profilePicture", resizedPicture);
+                store.setItem("profilePicture", resizedPicture);
                 updateProfileDisplay();
             }
             catch {
-                alert("Unable to save the profile picture.");
+                notify("Unable to save the profile picture.");
             }
         };
         image.onerror = () => {
-            alert("Unable to read the selected image.");
+            notify("Unable to read the selected image.");
         };
         if (typeof reader.result === "string") {
             image.src = reader.result;
         }
     };
     reader.onerror = () => {
-        alert("Unable to read the selected file.");
+        notify("Unable to read the selected file.");
     };
     reader.readAsDataURL(file);
     // Allow selecting the same file again later
@@ -144,7 +147,7 @@ profilePictureInput?.addEventListener("change", () => {
 });
 // Remove the saved profile picture
 removeProfilePictureButton?.addEventListener("click", () => {
-    localStorage.removeItem("profilePicture");
+    store.removeItem("profilePicture");
     updateProfileDisplay();
 });
 // =========================================
@@ -157,4 +160,3 @@ logoutButton?.addEventListener("click", async () => {
     await fetch("/api/logout", { method: "POST" }).catch(() => undefined);
     window.location.href = "index.html";
 });
-export {};

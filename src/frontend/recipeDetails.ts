@@ -1,4 +1,6 @@
 import { store, communityRecipes } from "./store.js";
+import { notify } from "./ui.js";
+import { renderReviews } from "./reviews.js";
 
 export interface RecipeDetails {
     name: string;
@@ -54,6 +56,16 @@ function displayRecipe(recipe: RecipeDetails): void {
         instructions.appendChild(item);
     });
 
+    // Reviews: what others said about your recipe, or leave one on theirs
+    let reviewsBox = document.querySelector<HTMLElement>("#recipe-reviews");
+    if (!reviewsBox) {
+        reviewsBox = document.createElement("section");
+        reviewsBox.id = "recipe-reviews";
+        reviewsBox.className = "recipe-reviews";
+        instructions.after(reviewsBox);
+    }
+    renderReviews(reviewsBox, recipe as RecipeDetails & { id?: number; owner?: string });
+
     document.querySelector("#recipe-details")?.scrollIntoView({
         behavior: "smooth"
     });
@@ -98,7 +110,7 @@ document.addEventListener("click", (event: MouseEvent) => {
         );
 
     if (!matchedRecipe) {
-        alert("Recipe details could not be found.");
+        notify("Recipe details could not be found.");
         return;
     }
 
@@ -157,7 +169,7 @@ destinationOptions.forEach((option) => {
 // Open the Save Recipe panel
 saveToBoardButton?.addEventListener("click", () => {
     if (!selectedRecipe || !saveToBoardPanel || !saveBoardSelect) {
-        alert("Please select a recipe first.");
+        notify("Please select a recipe first.");
         return;
     }
 
@@ -291,7 +303,7 @@ confirmSaveBoardButton?.addEventListener("click", () => {
 
     if (destination === "board") {
         if (!saveBoardSelect.value) {
-            alert("Please select a board.");
+            notify("Please select a board.");
             return;
         }
 
@@ -300,7 +312,7 @@ confirmSaveBoardButton?.addEventListener("click", () => {
         );
 
         if (!selectedBoard) {
-            alert("The selected board could not be found.");
+            notify("The selected board could not be found.");
             return;
         }
 

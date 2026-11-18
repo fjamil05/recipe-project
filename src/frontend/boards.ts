@@ -1,5 +1,7 @@
 import { recipes, type RecipeDetails } from "./recipeDetails.js";
 import { store, createShareButton } from "./store.js";
+import { notify } from "./ui.js";
+import { createCollaboratorsButton } from "./collab.js";
 interface SavedRecipe {
     name: string;
     category: string;
@@ -217,7 +219,7 @@ const unsortedRecipes = savedRecipes.filter((recipe) => {
             // Refresh the Unsorted Recipes section
             displaySavedRecipes();
 
-            alert(`"${recipe.name}" was deleted successfully.`);
+            notify(`"${recipe.name}" was deleted successfully.`);
         });
 
         menuButton.addEventListener("click", () => {
@@ -296,7 +298,7 @@ addToBoardButton.addEventListener("click", () => {
     const boards = savedBoards;
 
     if (boards.length === 0) {
-        alert("You need to create a board first.");
+        notify("You need to create a board first.");
         return;
     }
 
@@ -331,12 +333,12 @@ addToBoardConfirm.addEventListener("click", () => {
     );
 
     if (!selectedBoard) {
-        alert("Please select a valid board.");
+        notify("Please select a valid board.");
         return;
     }
 
     if (selectedBoard.recipes.includes(recipe.name)) {
-        alert("This recipe is already in the selected board.");
+        notify("This recipe is already in the selected board.");
         return;
     }
 
@@ -375,7 +377,7 @@ addToBoardConfirm.addEventListener("click", () => {
 
     displaySavedRecipes();
     
-    alert(`"${recipe.name}" was added to "${selectedBoard.name}"!`);
+    notify(`"${recipe.name}" was added to "${selectedBoard.name}"!`);
 });
 
 
@@ -635,7 +637,7 @@ board.recipes.forEach((recipeName) => {
         );
 
         if (!recipe) {
-            alert("This recipe cannot be edited because its saved details were not found.");
+            notify("This recipe cannot be edited because its saved details were not found.");
             return;
         }
 
@@ -728,7 +730,7 @@ board.recipes.forEach((recipeName) => {
         );
 
         if (updatedRecipes.length === savedRecipes.length) {
-            alert("This recipe was not found in your saved recipes.");
+            notify("This recipe was not found in your saved recipes.");
             return;
         }
 
@@ -773,7 +775,7 @@ board.recipes.forEach((recipeName) => {
         // Refresh the current board
         openBoard(board);
 
-        alert(`"${recipeName}" was deleted successfully.`);
+        notify(`"${recipeName}" was deleted successfully.`);
     });
 
 
@@ -805,7 +807,7 @@ viewButton.addEventListener("click", () => {
         recipes.find((recipe) => recipe.name === recipeName);
 
     if (!matchedRecipe) {
-        alert("Recipe details could not be found.");
+        notify("Recipe details could not be found.");
         return;
     }
 
@@ -1024,7 +1026,7 @@ deleteButton.addEventListener("click", () => {
     // Remove it from the saved boards
     savedBoards.splice(boardIndex, 1);
 
-    // Update localStorage
+    // Save the change
     store.setItem(
         "recipeBoards",
         JSON.stringify(savedBoards)
@@ -1048,6 +1050,7 @@ deleteButton.addEventListener("click", () => {
 
     menuOptions.appendChild(editButton);
     menuOptions.appendChild(createShareButton("board", String(board.id)));
+    menuOptions.appendChild(createCollaboratorsButton(board.id, board.name));
     menuOptions.appendChild(deleteButton);
 
     boardMenu.appendChild(menuButton);
@@ -1106,7 +1109,7 @@ if (coverInput?.files?.[0]) {
         coverPhoto = await resizeBoardPhoto(coverInput.files[0]);
     } catch (error) {
         console.error("Photo upload failed:", error);
-        alert("Could not process the selected photo.");
+        notify("Could not process the selected photo.");
         return;
     }
 }
@@ -1171,14 +1174,14 @@ boardEditForm?.addEventListener("submit", async (event) => {
     );
 
     if (!board) {
-        alert("Board not found.");
+        notify("Board not found.");
         return;
     }
 
     const updatedName = editBoardName.value.trim();
 
     if (!updatedName) {
-        alert("Please enter a board name.");
+        notify("Please enter a board name.");
         return;
     }
 
@@ -1204,7 +1207,7 @@ boardEditForm?.addEventListener("submit", async (event) => {
             );
         } catch (error) {
             console.error("Could not process photo:", error);
-            alert("Could not process the selected photo.");
+            notify("Could not process the selected photo.");
             return;
         }
     }
@@ -1215,7 +1218,7 @@ boardEditForm?.addEventListener("submit", async (event) => {
     board.coverPhoto = updatedCoverPhoto;
 
 
-    // Save changes to localStorage
+    // Save the changes
     store.setItem(
         "recipeBoards",
         JSON.stringify(savedBoards)
@@ -1377,7 +1380,7 @@ newRecipeForm?.addEventListener("submit", (event) => {
         !ratingInput.value || !Number.isFinite(time) || time < 1 ||
         ingredients.length === 0 || instructions.length === 0
     ) {
-        alert("Please complete all recipe fields.");
+        notify("Please complete all recipe fields.");
         return;
     }
 
@@ -1390,7 +1393,7 @@ newRecipeForm?.addEventListener("submit", (event) => {
     );
 
     if (duplicateRecipe) {
-        alert("A saved recipe with this name already exists.");
+        notify("A saved recipe with this name already exists.");
         return;
     }
 
@@ -1455,7 +1458,7 @@ recipeEditForm?.addEventListener("submit", (event) => {
     const originalName = editRecipeForm.dataset.recipeName;
 
     if (!originalName) {
-        alert("No recipe was selected for editing.");
+        notify("No recipe was selected for editing.");
         return;
     }
 
@@ -1508,7 +1511,7 @@ recipeEditForm?.addEventListener("submit", (event) => {
         updatedIngredients.length === 0 ||
         updatedInstructions.length === 0
     ) {
-        alert("Please complete all recipe fields.");
+        notify("Please complete all recipe fields.");
         return;
     }
 
@@ -1521,7 +1524,7 @@ recipeEditForm?.addEventListener("submit", (event) => {
     );
 
     if (recipeIndex === -1) {
-        alert("The recipe could not be found.");
+        notify("The recipe could not be found.");
         return;
     }
 
@@ -1533,7 +1536,7 @@ recipeEditForm?.addEventListener("submit", (event) => {
     );
 
     if (duplicateName) {
-        alert("Another saved recipe already has this name.");
+        notify("Another saved recipe already has this name.");
         return;
     }
 
@@ -1594,7 +1597,7 @@ recipeEditForm?.addEventListener("submit", (event) => {
     delete editRecipeForm.dataset.recipeName;
     recipeEditForm.reset();
 
-    alert(`"${updatedName}" was updated successfully!`);
+    notify(`"${updatedName}" was updated successfully!`);
 });
 
 

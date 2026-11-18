@@ -2059,3 +2059,216 @@ header {
     text-align: center;
     padding-bottom: 30px;
 }
+
+
+/* =========================================
+   New features - these reuse the existing
+   colors, panels and buttons from above
+   ========================================= */
+
+/* Small messages that replaced alert() popups.
+   Same colors as the planner panels. */
+#toast-area {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: min(380px, calc(100vw - 40px));
+}
+
+.toast {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1px solid #f3b29d;
+    border-radius: 12px;
+    background-color: #fff5ef;
+    color: #4b403c;
+    font-size: 15px;
+}
+
+.toast span {
+    flex: 1;
+}
+
+.toast-close {
+    border: none;
+    background: none;
+    color: #a94e2e;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+/* Pop-up panels use the .planner-recipe-form look */
+.app-dialog {
+    margin: auto;
+}
+
+.app-dialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.app-dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+}
+
+.app-dialog-close {
+    border: none;
+    background: none;
+    color: #a94e2e;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.app-dialog h3 {
+    color: #e95525;
+}
+
+/* Forms inside the new features: same as the planner form fields */
+.account-form,
+.review-form,
+.collab-add-form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.account-form label,
+.review-form label,
+.collab-add-form label {
+    color: #4b403c;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.account-form input,
+.review-form select,
+.review-form textarea,
+.collab-add-form input,
+.collab-add-form select {
+    width: 100%;
+    padding: 12px 14px;
+    box-sizing: border-box;
+    border: 1px solid #f3b29d;
+    border-radius: 8px;
+    background-color: white;
+    color: #333;
+    font-size: 15px;
+    font-family: inherit;
+}
+
+/* Same as the Cancel buttons */
+.secondary-button {
+    background-color: #ffffff;
+    color: #a94e2e;
+    border: 2px solid #efb49e;
+    border-radius: 10px;
+    padding: 13px 24px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.secondary-button:hover {
+    background-color: #ffe6d9;
+}
+
+.danger-zone {
+    padding-top: 15px;
+    border-top: 1px solid #f3b29d;
+}
+
+/* Grocery list (inside a .planner-recipe-form panel) */
+.grocery-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.grocery-item label {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 8px 0;
+    color: #4b403c;
+    cursor: pointer;
+}
+
+.grocery-item-recipes,
+.review-date,
+.collab-added-by {
+    color: #888;
+    font-size: 13px;
+}
+
+.grocery-item.checked .grocery-item-text {
+    color: #aaa;
+    text-decoration: line-through;
+}
+
+#grocery-empty,
+.collab-empty,
+.review-hint {
+    color: #888;
+}
+
+/* Reviews (inside Recipe Details) */
+.recipe-reviews {
+    margin-top: 25px;
+}
+
+.review-list {
+    padding-left: 20px;
+}
+
+.review-heading,
+.review-comment {
+    margin: 4px 0;
+}
+
+/* Collaborative Boards: same heading as Saved Recipes */
+.collab-boards-section > h2 {
+    color: #f4511e;
+    font-family: 'Press Start 2P', monospace;
+    font-size: 22px;
+    line-height: 1.6;
+    margin-top: 45px;
+    margin-bottom: 30px;
+}
+
+.collab-boards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+}
+
+.collab-recipe-list,
+.collab-member-list {
+    padding: 0;
+    list-style: none;
+}
+
+.collab-recipe,
+.collab-member {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 8px 0;
+}
+
+.collab-recipe details {
+    flex: 1;
+}
+
+.collab-recipe summary {
+    cursor: pointer;
+}
