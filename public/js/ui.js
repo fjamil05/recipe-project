@@ -1,9 +1,7 @@
-// =========================================
 // Shared page helpers
-// =========================================
-// notify()  - small message in the corner instead of alert() popups
-// api()     - calls the server and returns the JSON
-// el()      - creates an element with text and a class
+// notify() - small message in the corner instead of alert() popups
+// api() - calls the server and returns the JSON
+// el() - creates an element with text and a class
 // openDialog() - a simple pop-up panel (used for settings, collaborators, ...)
 export function notify(message, kind = "info") {
     let area = document.querySelector("#toast-area");
@@ -87,7 +85,7 @@ export function openDialog(title, build) {
     build(body, close);
     dialog.showModal();
 }
-// "4/5" or "4.5/5", matching the site's Enjoyment Rating format
+// enjoyment rating format
 export function ratingText(stars) {
     return `${Math.round(stars * 10) / 10}/5`;
 }
