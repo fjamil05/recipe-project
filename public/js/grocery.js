@@ -1,8 +1,5 @@
-// =========================================
 // Grocery list (Dashboard)
-// =========================================
-// Adds up the ingredients of every recipe planned for the week shown
-// on the dashboard. Checkmarks are saved to the account per week.
+// Adds up the ingredients of every recipe planned for the week shown on the dashboard. Checkmarks are saved to the account per week.
 import { store } from "./store.js";
 import { notify } from "./ui.js";
 let shownWeekKey = "";
