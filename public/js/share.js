@@ -1,8 +1,5 @@
-// =========================================
 // Share page (share.html?t=...)
-// =========================================
-// Shows a recipe or board someone shared with a link.
-// No login needed, and nothing here can be edited.
+// Shows a recipe or board someone shared with a link. No login needed, and nothing here can be edited.
 import { renderReviews } from "./reviews.js";
 const shareContent = document.querySelector("#share-content");
 function element(tag, text, className) {
