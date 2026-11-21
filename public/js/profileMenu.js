@@ -25,9 +25,7 @@ document.addEventListener("click", (event) => {
         profileMenuButton?.setAttribute("aria-expanded", "false");
     }
 });
-// =========================================
 // Edit Display Name
-// =========================================
 const editDisplayNameButton = document.querySelector("#edit-display-name");
 const profileDisplayName = document.querySelector("#profile-display-name");
 const profileAvatar = document.querySelector("#profile-avatar");
@@ -83,9 +81,7 @@ editDisplayNameButton?.addEventListener("click", () => {
 });
 // Display the saved name when the page loads
 updateProfileDisplay();
-// =========================================
 // Profile Picture Upload and Removal
-// =========================================
 const changeProfilePictureButton = document.querySelector("#change-profile-picture");
 const removeProfilePictureButton = document.querySelector("#remove-profile-picture");
 const profilePictureInput = document.querySelector("#profile-picture-input");
@@ -150,9 +146,7 @@ removeProfilePictureButton?.addEventListener("click", () => {
     store.removeItem("profilePicture");
     updateProfileDisplay();
 });
-// =========================================
 // Log Out
-// =========================================
 const logoutButton = document.querySelector("#logout-button");
 // Return to the Recipe Tracker welcome page
 logoutButton?.addEventListener("click", async () => {
