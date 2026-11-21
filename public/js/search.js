@@ -96,9 +96,7 @@ function loadSavedRecipes() {
     filterRecipes();
 }
 loadSavedRecipes();
-// =========================================
 // Recipes shared by other users
-// =========================================
 // Shows recipes from everyone else's "Shared" boards after your own recipes.
 async function loadCommunityRecipes() {
     const recipeGrid = document.querySelector(".recipe-grid");
