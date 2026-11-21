@@ -1,8 +1,5 @@
-// =========================================
 // Reviews and comments
-// =========================================
-// Shows star ratings and comments on a recipe, and lets other users
-// leave their own. Used on the Search page and on share links.
+// Shows star ratings and comments on a recipe, and lets other users leave their own. Used on the Search page and on share links.
 import { api, button, el, errorText, notify, ratingText } from "./ui.js";
 function summaryLine(summary) {
     if (summary.averageStars === null) {
