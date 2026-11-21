@@ -1,9 +1,8 @@
 # Recipe Tracker
 
-A web app for saving recipes, organizing them into boards, planning meals for the week, and sharing recipes with other people.
+A web application for saving recipes, organizing them into boards, planning meals for the week, and sharing recipes with other people.
 
-Final project for CS 332, Fall 2026, built by Farrah Jamil, Asmitha Muthukumar and Ava Griffiths.
-
+Final project for CS 332, Fall 2026, built by AvaMarie Griffiths, Farrah Jamil, and Asmitha Muthukumar.
 ## Features
 
 - **Accounts:** sign up and log in. Passwords are hashed with bcrypt, and failed logins are rate limited. You can change your password or delete your account under **Account Settings**.
