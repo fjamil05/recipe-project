@@ -123,8 +123,7 @@ cancelSaveBoardButton?.addEventListener("click", () => {
         saveToBoardPanel.hidden = true;
     }
 });
-// If the selected recipe was shared by another user, save a copy of it
-// into this account first. Returns the name the recipe is saved under.
+// If the selected recipe was shared by another user, save a copy of it into this account first. Returns the name the recipe is saved under.
 function saveSelectedRecipeToAccount(recipe) {
     if (!("owner" in recipe)) {
         return recipe.name;
