@@ -292,10 +292,7 @@ cancelPlannerEditButton?.addEventListener("click", () => {
 });
 // Load recipes when the page opens
 displayPlannedRecipes();
-// =========================================
-// Collaborators
-// =========================================
-// Everyone you share at least one board with
+// Collaborators - Everyone you share at least one board with
 async function loadCollaborators() {
     const container = document.querySelector("#team-members");
     if (!container) {
