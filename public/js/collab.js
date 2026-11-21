@@ -1,12 +1,8 @@
-// =========================================
 // Collaborators (Boards page)
-// =========================================
-// Board owners can add other users by username. Collaborators can then
-// add their own recipes to that board. Boards with collaborators show up
-// in the "Collaborative Boards" section for everyone involved.
+// Board owners can add other users by username. Collaborators can then add their own recipes to that board. Boards with collaborators show up in the "Collaborative Boards" section for everyone involved.
 import { flush, store } from "./store.js";
 import { api, button, el, errorText, notify, openDialog } from "./ui.js";
-// ---------- Managing who is on one of your boards ----------
+// board management
 async function fillMembers(list, boardId) {
     const result = await api("GET", `/api/boards/${boardId}/members`);
     list.replaceChildren();
@@ -73,7 +69,7 @@ export function openCollaboratorsDialog(boardId, boardName) {
 export function createCollaboratorsButton(boardId, boardName) {
     return button("Collaborators", "", () => openCollaboratorsDialog(boardId, boardName));
 }
-// ---------- The Collaborative Boards section ----------
+// Collab Boards Section
 function recipeEntry(board, recipe) {
     const item = el("li", undefined, "collab-recipe");
     const details = el("details");
