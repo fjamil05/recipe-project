@@ -1,8 +1,6 @@
-// =========================================
 // Account storage
-// =========================================
-// Keeps everything a user saves in the database, tied to their account.
-// It works like localStorage (getItem / setItem) so the page code barely changes:
+// Keeps everything a user saves in the database, connected to their account.
+// It works like localStorage (getItem / setItem) so the page code barely changes, which lightens the load:
 //   - "savedRecipes" and "recipeBoards" are saved together to /api/library
 //   - planner, display name, profile picture and grocery checkmarks
 //     are saved one at a time to /api/userdata/<key>
@@ -126,8 +124,7 @@ export const store = {
         }
     }
 };
-// One time only: move things that were saved in this browser
-// before accounts existed into the account
+// One time only: move things that were saved in this browser before accounts existed into the account
 function moveBrowserDataIntoAccount(data) {
     const accountHasLibrary = (data.savedRecipes ?? []).length > 0 || (data.recipeBoards ?? []).length > 0;
     if (!accountHasLibrary && !localStorage.getItem("movedToAccount")) {
@@ -204,9 +201,7 @@ window.addEventListener("pagehide", () => {
         });
     }
 });
-// =========================================
 // Share links
-// =========================================
 // Creates a share link for a recipe (by name) or board (by id) and copies it
 export async function copyShareLink(type, key) {
     await flush();
