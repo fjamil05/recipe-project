@@ -1,8 +1,5 @@
-// =========================================
 // Account settings (profile menu)
-// =========================================
-// Adds an "Account Settings" button to the profile dropdown with
-// change password and delete account.
+// Adds an "Account Settings" button to the profile dropdown with change password and delete account.
 import { currentUsername } from "./store.js";
 import { api, el, errorText, notify, openDialog } from "./ui.js";
 function passwordField(labelText, id, autocomplete) {
